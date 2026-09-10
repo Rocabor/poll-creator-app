@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tiebreak — Design tokens & base styles
+   Cream tabletop, cocoa ink outlines, three game-piece colors:
+   tangerine (winning), teal (system), butter (celebration).
+   See guidance/brand-kit.md. Tokens mirror the challenge starter.
+   ============================================================ */
+
+@theme inline {
+  --color-cream: #faf2e3;
+  --color-cream-deep: #f0e3c9;
+  --color-card: #fffbf2;
+  --color-cream-bright: #fff7ea;
+
+  --color-cocoa: #38261a;
+  --color-cocoa-soft: #77614c;
+  --color-cocoa-faint: #a5937e;
+
+  --color-tangerine: #e2542c;
+  --color-tangerine-deep: #b93e1e;
+
+  --color-teal: #1f7367;
+  --color-teal-deep: #14544b;
+  --color-teal-soft: #cbe2d8;
+
+  --color-butter: #f3c64f;
+  --color-butter-deep: #d9a82e;
+
+  --color-profile-peach: #f8c9b9;
+  --color-profile-teal: #cbe2d8;
+  --color-profile-butter: #f6e0a4;
+  --color-profile-lilac: #e3d2f2;
+
+  --font-display: var(--font-gabarito), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-karla), system-ui, -apple-system, sans-serif;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.375rem;
+  --radius-full: 9999rem;
+
+  --shadow-press-tangerine: inset 0 -2px 0 rgba(122, 34, 10, 0.35);
+  --shadow-press-teal: inset 0 -2px 0 rgba(10, 58, 50, 0.4);
+  --shadow-press-cocoa: inset 0 -2px 0 rgba(0, 0, 0, 0.35);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-cream);
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-cocoa);
+    font-family: var(--font-karla), system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-display {
+    font-family: var(--font-gabarito), system-ui, -apple-system, sans-serif;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-butter);
+    color: var(--color-cocoa);
+  }
+}
+
+@layer components {
+  /* Depth from ink, not shadows. Don't thin these out. */
+  .border-cocoa {
+    border: 2.5px solid var(--color-cocoa);
+  }
+
+  .border-cocoa-sm {
+    border: 1.5px solid var(--color-cocoa);
+  }
+
+  /* Pressed-plastic game-piece buttons */
+  .btn-game-piece {
+    box-shadow: var(--shadow-press-tangerine);
+    transition:
+      transform 0.1s ease,
+      filter 0.15s ease;
+  }
+
+  .btn-game-piece:active {
+    transform: translateY(1.5px);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .riso-title {
+    text-shadow: 0.045em 0.045em 0 var(--color-butter);
+  }
+
+  .paper-grain {
+    background-image: radial-gradient(rgba(56, 38, 26, 0.045) 1px, transparent 0);
+    background-size: 17px 17px;
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Visually hidden but focusable/announceable for assistive tech */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* Real-time exceptions: a poll deadline is essential and uncontrollable,
+   and nothing here announces per-tick countdowns. Motion is authored and
+   respects prefers-reduced-motion: same information, same occasion, no motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

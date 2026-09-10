@@ -1,0 +1,88 @@
+// Tiebreak database schema.
+// Two to three tables were the spec's shape; we model the poll lifecycle,
+// options-with-a-status (creator option vs. voter suggestion), and one-row
+// per vote so per-voter tallies, attribution-at-close and pick-up-to-N are
+// all cheap. See README for the state-machine decisions that live here.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  avatarSeed   String    @default("Morgan")
+  avatarTint   String    @default("cbe2d8")
+  createdAt    DateTime  @default(now())
+  polls        Poll[]
+  sessions     Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  isGuest   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Poll {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  creatorId   String
+  title       String
+  type        String // "single" | "multi"
+  maxChoices  Int      @default(1)
+  suggestions Boolean  @default(true)
+  status      String // "open" | "settled"
+  createdAt   DateTime @default(now())
+  closesAt    DateTime
+  settledAt   DateTime?
+  deletedAt   DateTime?
+  tieResolved Boolean  @default(false)
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  options     Option[]
+  votes       Vote[]
+}
+
+model Option {
+  id               String   @id @default(cuid())
+  pollId           String
+  label            String
+  displayOrder     Int
+  source           String // "creator" | "suggestion"
+  suggestionStatus String? // "pending" | "approved" | "declined" (null for source="creator")
+  suggestedByName  String?
+  suggestedSeed    String?
+  suggestedTint    String?
+  poll             Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes            Vote[]
+
+  @@index([pollId, displayOrder])
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  pollId     String
+  optionId   String
+  name       String
+  seed       String
+  tint       String
+  voterToken String
+  castAt     DateTime @default(now())
+  poll       Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  option     Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  // Casual (not forensic) vote integrity: one voter token per poll.
+  @@unique([pollId, voterToken])
+  @@index([optionId])
+}

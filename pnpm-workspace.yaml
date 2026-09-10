@@ -1,0 +1,7 @@
+# pnpm 11+ moved build-script approval here (allowBuilds replaced
+# onlyBuiltDependencies). These packages run trusted native/codegen scripts.
+allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
+  prisma: true
+  esbuild: true

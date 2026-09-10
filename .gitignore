@@ -50,3 +50,10 @@ coverage/
 
 # Misc
 *.tsbuildinfo
+
+# Runtime database
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/dev.db*
+*.db
+*.db-journal
