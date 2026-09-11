@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { castVote } from "@/app/actions/votes";
+import { suggestOption } from "@/app/actions/suggestions";
 import { announce } from "@/lib/announce";
 import { usePoll } from "@/lib/use-poll";
 import Avatar from "@/components/avatar";
 import ResultsBoard from "@/components/vote/results-board";
+import Moderation from "@/components/vote/moderation";
 import type { PollView } from "@/lib/types";
 
 const AVATAR_TINTS = ["f8c9b9", "cbe2d8", "f6e0a4", "e3d2f2"];
@@ -218,7 +220,127 @@ export default function VoteBooth({
       <div className={votingOpen && !locked ? "mt-10 opacity-90" : "mt-10"}>
         <ResultsBoard poll={live} showBackers={live.status === "settled"} />
       </div>
+
+      {votingOpen && isMine && (
+        <Moderation poll={live} />
+      )}
+
+      {votingOpen && !isMine && live.suggestionsEnabled && (
+        <SuggestForm
+          slug={poll.slug}
+          token={token}
+          name={name.trim()}
+          tint={tint}
+        />
+      )}
     </div>
+  );
+}
+
+function SuggestForm({
+  slug,
+  token,
+  name,
+  tint,
+}: {
+  slug: string;
+  token: string;
+  name: string;
+  tint: string;
+}) {
+  const [label, setLabel] = useState("");
+  const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  async function submit() {
+    const trimmed = label.trim();
+    if (trimmed.length < 2) {
+      setStatus("error");
+      setMessage("Type the option first.");
+      announce("Type the option first.");
+      return;
+    }
+    if (!name) {
+      setStatus("error");
+      setMessage("Add your name at the top first.");
+      announce("Add your name before suggesting.");
+      return;
+    }
+
+    setStatus("busy");
+    const result = await suggestOption({
+      slug,
+      label: trimmed,
+      name,
+      seed: name,
+      tint,
+      token,
+    });
+
+    if (!result.ok) {
+      setStatus("error");
+      setMessage(result.error ?? "Couldn't send that.");
+      announce(result.error ?? "Couldn't send that.");
+      return;
+    }
+    setLabel("");
+    setStatus("done");
+    announce("Option suggested — the creator will review it.");
+  }
+
+  return (
+    <section aria-labelledby="suggest-heading" className="mt-8 border-cocoa rounded-2xl bg-card p-4">
+      <h2 id="suggest-heading" className="font-display text-lg font-bold text-cocoa">
+        Got another idea?
+      </h2>
+      <p className="mt-1 text-sm text-cocoa-soft">
+        Suggest an option — {name ? `${name.split(" ")[0]}, it'll` : "it'll"} be
+        marked “Suggested by you” and the creator can add it to the ballot.
+      </p>
+
+      {status === "done" ? (
+        <p className="mt-3 rounded-lg bg-teal-soft px-3 py-2 text-sm font-bold text-teal-deep">
+          Sent! The creator will review it.
+        </p>
+      ) : (
+        <form
+          className="mt-3 flex flex-wrap items-center gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
+        >
+          <label htmlFor="suggestion-label" className="sr-only">
+            Suggest an option
+          </label>
+          <input
+            id="suggestion-label"
+            type="text"
+            value={label}
+            maxLength={60}
+            onChange={(e) => {
+              setLabel(e.target.value);
+              setStatus("idle");
+            }}
+            placeholder="Add your idea…"
+            className="min-w-0 flex-1 rounded-lg border-2 border-cocoa bg-cream px-3 py-2.5 focus:border-teal"
+          />
+          <button
+            type="submit"
+            disabled={status === "busy"}
+            className="btn-game-piece rounded-full bg-teal px-5 py-2.5 font-display font-bold text-cream disabled:opacity-60"
+          >
+            {status === "busy" ? "Sending…" : "Suggest"}
+          </button>
+        </form>
+      )}
+
+      {status === "error" && (
+        <p role="alert" className="mt-2 text-sm font-bold text-tangerine-deep">
+          {message}
+        </p>
+      )}
+    </section>
   );
 }
 

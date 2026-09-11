@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type {
+  DeclinedSuggestionView,
   OptionView,
   PendingSuggestionView,
   PollView,
@@ -178,6 +179,24 @@ export function toPollView(
         }))
     : undefined;
 
+  const declinedSuggestions: DeclinedSuggestionView[] | undefined =
+    opts.includePending
+      ? sortedOptions
+          .filter(
+            (o) =>
+              o.source === "suggestion" && o.suggestionStatus === "declined"
+          )
+          .map((o) => ({
+            id: o.id,
+            label: o.label,
+            suggestedBy: {
+              name: o.suggestedByName ?? "A friend",
+              seed: o.suggestedSeed ?? "friend",
+              tint: o.suggestedTint ?? "cbe2d8",
+            },
+          }))
+      : undefined;
+
   const winner = leaders[0];
   const winnerAttribution =
     poll.status === "settled" && winner
@@ -204,6 +223,7 @@ export function toPollView(
     options: sortedView,
     isMine,
     pendingSuggestions,
+    declinedSuggestions,
     winnerAttribution,
     tieBrokenOptionId: poll.tieResolved && winner ? winner.id : undefined,
   };

@@ -30,6 +30,12 @@ export interface PendingSuggestionView {
   suggestedBy: VoterRef;
 }
 
+export interface DeclinedSuggestionView {
+  id: string;
+  label: string;
+  suggestedBy: VoterRef;
+}
+
 /**
  * Public shape of a poll. Attribution (backers) is never included while a
  * poll is open — that is an API decision, mirrored by the UI.
@@ -53,6 +59,7 @@ export interface PollView {
   /** Creator-only extras */
   isMine?: boolean;
   pendingSuggestions?: PendingSuggestionView[];
+  declinedSuggestions?: DeclinedSuggestionView[];
   /** Attributed lead for the reveal: "Priya, Ada, Kai + 2 more backed it" */
   winnerAttribution?: string;
   tieBrokenOptionId?: string;
