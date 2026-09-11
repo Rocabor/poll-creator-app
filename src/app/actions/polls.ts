@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
+import { slugify } from "@/lib/slug";
 
 export type CreatePollState = { error?: string } | null;
 
@@ -24,16 +25,6 @@ const createSchema = z.object({
     .max(4, "Pick-ups above 4 get unwieldy"),
   suggestions: z.coerce.boolean(),
 });
-
-export function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 48);
-}
 
 function randomSuffix(): string {
   return Math.random().toString(36).slice(2, 6);
