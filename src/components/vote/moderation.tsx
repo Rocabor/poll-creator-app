@@ -33,7 +33,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
   if (poll.status !== "open") return null;
 
   return (
-    <section aria-labelledby="moderation-heading" className="mt-6 border-cocoa rounded-2xl bg-card p-5">
+    <section aria-labelledby="moderation-heading" className="mt-6 border-cocoa rounded-[22px] bg-card p-5">
       <h2 id="moderation-heading" className="font-display text-lg font-bold text-cocoa">
         Suggested options
       </h2>
@@ -46,7 +46,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
       {pending.length > 0 && (
         <ul className="mt-3 space-y-2">
           {pending.map((s: PendingSuggestionView) => (
-            <li key={s.id} className="flex flex-wrap items-center gap-3 rounded-xl bg-cream-deep/70 px-3 py-2.5">
+            <li key={s.id} className="flex flex-wrap items-center gap-3 rounded-[18px] border border-cocoa/15 bg-cream px-3 py-2.5">
               <Avatar name={s.suggestedBy.name} seed={s.suggestedBy.seed} tint={s.suggestedBy.tint} size={30} />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display font-bold text-cocoa">{s.label}</p>
@@ -57,7 +57,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
                   type="button"
                   disabled={busyId === s.id}
                   onClick={() => run(s.id, () => approveSuggestion(s.id), `“${s.label}” is on the ballot.`)}
-                  className="inline-flex items-center gap-1 rounded-full bg-teal px-3 py-2 text-sm font-bold text-cream disabled:opacity-60"
+                  className="btn-game-piece shadow-press-teal inline-flex items-center gap-1 rounded-xl border-cocoa-sm bg-teal px-3 py-2 text-sm font-bold text-cream transition-colors hover:bg-teal-deep disabled:opacity-60 sm:rounded-full"
                 >
                   <Check aria-hidden="true" size={16} /> Add
                 </button>
@@ -65,7 +65,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
                   type="button"
                   disabled={busyId === s.id}
                   onClick={() => run(s.id, () => declineSuggestion(s.id), `“${s.label}” declined.`)}
-                  className="inline-flex items-center gap-1 rounded-full border-cocoa-sm bg-card px-4 py-2 text-sm font-bold text-cocoa disabled:opacity-60"
+                  className="inline-flex items-center gap-1 rounded-xl border-cocoa-sm bg-cream px-4 py-2 text-sm font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60 sm:rounded-full"
                   aria-label={`Decline “${s.label}”`}
                 >
                   <X aria-hidden="true" size={16} /> No

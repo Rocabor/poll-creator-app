@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ArrowRight, MessageSquare, Sparkles, Trophy, Users } from "lucide-react";
 import { guestAction } from "@/app/actions/auth";
 import Avatar from "@/components/avatar";
 
@@ -8,21 +9,24 @@ export const metadata: Metadata = {
     "Create a poll, drop the link in the group chat. Friends tap to vote with no account — and the reveal shows who backed the winner.",
 };
 
-const STEPS = [
+const PILLARS = [
   {
-    n: "1",
-    title: "Start the poll",
-    body: "Tell the gang what's up: pizza, a film, a date night. Tap the link — done.",
+    icon: Users,
+    iconClass: "bg-teal-soft text-teal-deep",
+    title: "Zero sign-up walls",
+    body: "Voters tap the link on their phone, pick an avatar face, and vote in seconds. No apps, no passwords.",
   },
   {
-    n: "2",
-    title: "They tap to vote",
-    body: "No accounts, no downloads. Name, avatar, done. They can even pitch options.",
+    icon: MessageSquare,
+    iconClass: "bg-butter text-cocoa",
+    title: "Voter suggestions",
+    body: "Friends pitch options you didn't think of. You approve or decline them — your call, house rules.",
   },
   {
-    n: "3",
-    title: "Reveal who backed it",
-    body: "When it closes, everyone sees the winner — and exactly who carried it over the line.",
+    icon: Trophy,
+    iconClass: "bg-tangerine text-cream-bright",
+    title: "Honest live tallies",
+    body: "Counts sit beside every percentage, bars stretch to the leader, and ties get called out in words.",
   },
 ];
 
@@ -38,35 +42,41 @@ const DEMO_VOTERS = [
 export default function LandingPage() {
   return (
     <div>
-      {/* Hero */}
-      <section className="border-b-2 border-cocoa bg-cream-deep/60">
-        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:py-28">
-          <p className="font-display text-sm font-bold tracking-widest text-tangerine-deep uppercase">
-            Group votes for the group chat
-          </p>
-          <h1 className="riso-title mt-4 font-display text-5xl font-black text-cocoa sm:text-6xl">
+      <section className="border-b-2 border-[#38261A]/10 bg-cream-deep/60">
+        <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:py-20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-teal-soft px-3.5 py-1.5 text-xs font-bold text-teal-deep sm:text-sm">
+            <Sparkles size={14} strokeWidth={2.8} aria-hidden="true" />
+            Settle group decisions without the endless chat loop
+          </span>
+
+          <h1 className="riso-title mt-5 font-display text-4xl font-black leading-[1.05] tracking-tight text-cocoa sm:text-5xl lg:text-6xl">
             One vote flips it.
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-cocoa-soft">
-            Create a poll, drop the link in the chat. Friends tap to vote on
-            their phones with no account — and when the poll closes, the reveal
-            shows who backed the winner.
+
+          <p className="mx-auto mt-5 max-w-xl text-base font-medium leading-relaxed text-cocoa-soft sm:text-lg">
+            Twenty messages about pizza and still no dinner? Tiebreak puts the
+            vote right into WhatsApp or Discord. No voter accounts, honest live
+            scoreboards, and a reveal that feels like the end of a good game.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <form
+            action={guestAction}
+            className="mx-auto mt-8 flex max-w-md flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3"
+          >
+            <button
+              type="submit"
+              className="btn-game-piece flex w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-2.5 font-display text-sm font-bold text-cream transition-colors hover:bg-tangerine sm:w-auto sm:rounded-full sm:px-6 sm:py-3 sm:text-base"
+            >
+              Try as Guest
+            </button>
             <a
               href="/auth/signup"
-              className="btn-game-piece rounded-full bg-tangerine-deep px-7 py-3.5 font-display text-lg font-bold text-cream"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-card px-6 py-2.5 font-display text-sm font-bold text-cocoa transition-colors hover:bg-cream-deep sm:w-auto sm:rounded-full sm:px-6 sm:py-3 sm:text-base"
             >
               Create a poll
+              <ArrowRight size={16} strokeWidth={2.5} aria-hidden="true" />
             </a>
-            <a
-              href="/auth/login"
-              className="rounded-full border-cocoa-sm bg-card px-7 py-3.5 font-display text-lg font-bold text-cocoa transition-colors hover:bg-cream-deep"
-            >
-              Log in
-            </a>
-          </div>
+          </form>
 
           <div className="mt-10 flex items-center justify-center gap-1">
             {DEMO_VOTERS.map((v) => (
@@ -86,89 +96,49 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Guest / how-it-works */}
-      <section className="mx-auto max-w-5xl px-4 py-14">
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
-          <div>
-            <h2 className="font-display text-3xl font-black text-cocoa">
-              How it works
-            </h2>
-            <ol className="mt-6 space-y-6">
-              {STEPS.map((step) => (
-                <li key={step.n} className="flex gap-4">
-                  <span
-                    aria-hidden="true"
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-cocoa bg-butter font-display text-xl font-black text-cocoa"
-                  >
-                    {step.n}
-                  </span>
-                  <div>
-                    <h3 className="font-display text-xl font-bold text-cocoa">
-                      {step.title}
-                    </h3>
-                    <p className="mt-1 max-w-md text-cocoa-soft">{step.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <aside className="border-cocoa flex flex-col justify-center rounded-2xl bg-card p-6">
-            <h2 className="font-display text-2xl font-black text-cocoa">
-              See it with real votes
-            </h2>
-            <p className="mt-2 text-cocoa-soft">
-              Jump straight into a demo account with 5 polls and 32 real votes —
-              an order in the works, a film pick, and a reveal you can reopen.
-            </p>
-
-            <form
-              action={guestAction}
-              className="mt-6 flex flex-col items-start gap-3"
+      <section className="mx-auto max-w-5xl px-4 py-12">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {PILLARS.map((pillar) => (
+            <div
+              key={pillar.title}
+              className="border-cocoa rounded-[22px] bg-card p-5 shadow-xs"
             >
-              <button
-                type="submit"
-                className="btn-game-piece shadow-press-teal w-full rounded-full bg-teal px-7 py-3.5 font-display text-lg font-bold text-cream"
+              <span
+                className={`mb-3 flex h-10 w-10 items-center justify-center rounded-full border-cocoa-sm ${pillar.iconClass}`}
               >
-                Try the demo
-              </button>
-              <p className="text-xs text-cocoa-soft">
-                No sign-up. You get Morgan&apos;s dashboard instantly.
-              </p>
-            </form>
-          </aside>
+                <pillar.icon size={20} strokeWidth={2.4} aria-hidden="true" />
+              </span>
+              <h2 className="mb-1 font-display text-lg font-extrabold text-cocoa">
+                {pillar.title}
+              </h2>
+              <p className="text-xs text-cocoa-soft sm:text-sm">{pillar.body}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Feature strip */}
-      <section className="border-t-2 border-cocoa/20 bg-cream-deep/40">
-        <div className="mx-auto grid max-w-5xl gap-6 px-4 py-12 sm:grid-cols-3">
-          <div>
-            <h3 className="font-display text-lg font-bold text-cocoa">
-              Honest results
-            </h3>
-            <p className="mt-1 text-sm text-cocoa-soft">
-              Every bar shows its count and sits relative to the leader. Ties
-              are called out in words — no fake noise at 7 votes.
+      <section className="mx-auto max-w-5xl px-4 pb-16">
+        <div className="border-cocoa relative overflow-hidden rounded-[22px] bg-cream-deep p-6 text-center sm:p-8">
+          <div className="mx-auto max-w-md">
+            <span className="mb-1 block font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
+              Pre-loaded with real group data
+            </span>
+            <h2 className="mb-3 font-display text-2xl font-extrabold text-cocoa sm:text-3xl">
+              Step right into Morgan&apos;s dashboard
+            </h2>
+            <p className="mb-6 text-sm text-cocoa-soft">
+              Explore 5 realistic friend polls: a pizza night with a live race,
+              Friday film club, an Airbnb picker, a dinner date, and a brunch
+              booking.
             </p>
-          </div>
-          <div>
-            <h3 className="font-display text-lg font-bold text-cocoa">
-              Friends pitch in
-            </h3>
-            <p className="mt-1 text-sm text-cocoa-soft">
-              Voters can suggest options. You approve or decline them from the
-              same page.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-display text-lg font-bold text-cocoa">
-              Reveal at close
-            </h3>
-            <p className="mt-1 text-sm text-cocoa-soft">
-              Votes are private while it&apos;s open. When it closes, the winner&apos;s
-              backers are named.
-            </p>
+            <form action={guestAction}>
+              <button
+                type="submit"
+                className="btn-game-piece shadow-press-teal rounded-xl border-cocoa-sm bg-teal px-6 py-2.5 font-display text-xs font-bold text-cream transition-colors hover:bg-teal-deep sm:rounded-full sm:px-6 sm:py-2.5 sm:text-sm"
+              >
+                Launch Guest Dashboard
+              </button>
+            </form>
           </div>
         </div>
       </section>

@@ -74,7 +74,7 @@ export default function Reveal({
     <div className="mt-8">
       <section
         aria-labelledby="reveal-heading"
-        className="border-cocoa rounded-2xl bg-card p-6"
+        className="border-cocoa rounded-[22px] bg-card p-6"
       >
         <p className="font-display text-sm font-bold tracking-widest text-cocoa-soft uppercase">
           Poll closed
@@ -93,7 +93,7 @@ export default function Reveal({
               {leaders.map((o) => (
                 <li
                   key={o.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-butter/40 px-4 py-3 font-display font-bold text-cocoa"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-cocoa/20 bg-butter/40 px-4 py-3 font-display font-bold text-cocoa"
                 >
                   <span className="min-w-0">{o.label}</span>
                   <span className="tabular-nums shrink-0 text-sm">
@@ -112,7 +112,7 @@ export default function Reveal({
                     ""
                   )
                 }
-                className="btn-game-piece mt-4 inline-flex items-center gap-2 rounded-full bg-tangerine-deep px-5 py-3 font-display font-bold text-cream disabled:opacity-60"
+                className="btn-game-piece mt-4 inline-flex items-center gap-2 rounded-xl border-cocoa-sm bg-butter px-5 py-3 font-display font-bold text-cocoa transition-colors hover:bg-butter-deep disabled:opacity-60 sm:rounded-full"
               >
                 <Zap aria-hidden="true" size={18} />
                 Sudden death — settle it now
@@ -175,16 +175,16 @@ export default function Reveal({
       </div>
 
       {isMine && (
-        <div className="mt-8 border-cocoa rounded-2xl bg-card p-5">
-          <h3 className="font-display text-lg font-bold text-cocoa">
-            Creator controls
+        <div className="mt-8 border-cocoa rounded-[22px] bg-cream-deep p-4 sm:p-5">
+          <h3 className="font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
+            Organizer actions
           </h3>
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               type="button"
               disabled={busy}
               onClick={() => setReopenOpen(true)}
-              className="btn-game-piece shadow-press-teal inline-flex items-center gap-2 rounded-full bg-teal px-4 py-2.5 font-display font-bold text-cream disabled:opacity-60"
+              className="btn-game-piece shadow-press-teal inline-flex items-center gap-2 rounded-xl border-cocoa-sm bg-teal px-4 py-2.5 font-display font-bold text-cream transition-colors hover:bg-teal-deep disabled:opacity-60 sm:rounded-full"
             >
               <RotateCcw aria-hidden="true" size={16} />
               Reopen for votes
@@ -193,7 +193,7 @@ export default function Reveal({
               type="button"
               disabled={busy}
               onClick={() => setRetireOpen(true)}
-              className="rounded-full border-cocoa-sm bg-card px-4 py-2.5 font-display font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60"
+              className="rounded-xl border-cocoa-sm bg-cream px-4 py-2.5 font-display font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60 sm:rounded-full"
             >
               Retire this poll
             </button>

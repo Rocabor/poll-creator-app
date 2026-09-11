@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 import { announce } from "@/lib/announce";
 
 export default function CopyLink({ url, label }: { url: string; label: string }) {
@@ -21,10 +22,15 @@ export default function CopyLink({ url, label }: { url: string; label: string })
     <button
       type="button"
       onClick={copy}
-      className="rounded-full border-cocoa-sm bg-cream px-4 py-2 text-sm font-bold text-cocoa transition-colors hover:bg-cream-deep"
+      title={copied ? "Copied" : "Copy link"}
+      className="rounded-full p-2 text-cocoa-soft transition-colors hover:bg-cream-deep hover:text-cocoa"
       aria-label={`${label} — ${copied ? "copied" : "copy link"}`}
     >
-      {copied ? "Copied!" : "Share"}
+      {copied ? (
+        <Check aria-hidden="true" size={16} strokeWidth={2.8} className="text-teal" />
+      ) : (
+        <Copy aria-hidden="true" size={16} strokeWidth={2.2} />
+      )}
     </button>
   );
 }

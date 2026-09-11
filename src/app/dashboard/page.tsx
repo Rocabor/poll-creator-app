@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Clock, Flame, Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 import { settleIfDue } from "@/lib/poll-state";
+import { closesInCompact } from "@/lib/time";
 import DashboardPollCard from "@/components/dashboard/poll-card";
+import DashboardTabs from "@/components/dashboard/tabs";
 import type { DashboardPoll } from "@/components/dashboard/poll-card";
 
 export const metadata: Metadata = { title: "Your polls" };
@@ -88,34 +91,59 @@ async function loadDashboard(userId: string): Promise<Grouped> {
   return grouped;
 }
 
+function PollList({ polls, shareUrl }: { polls: DashboardPoll[]; shareUrl: string }) {
+  if (polls.length === 0) {
+    return (
+      <p className="rounded-[22px] border-2 border-dashed border-cocoa/30 px-4 py-8 text-center text-sm text-cocoa-soft">
+        Nothing here yet.
+      </p>
+    );
+  }
+  return (
+    <ul className="flex flex-col gap-3">
+      {polls.map((poll) => (
+        <DashboardPollCard key={poll.slug} poll={poll} shareUrl={`${shareUrl}/${poll.slug}`} />
+      ))}
+    </ul>
+  );
+}
+
 export default async function DashboardPage() {
   const user = await getSessionUser();
   if (!user) redirect("/landing");
 
   const { open, settled, retired } = await loadDashboard(user.id);
 
+  // Featured card: the open poll closing soonest.
+  const featured = open.length > 0
+    ? [...open].sort(
+        (a, b) => new Date(a.closesAt).getTime() - new Date(b.closesAt).getTime()
+      )[0]
+    : null;
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-black text-cocoa">
-            {user.name}&apos;s polls
-          </h1>
-          <p className="mt-1 text-cocoa-soft">
-            {open.length + settled.length} poll
-            {open.length + settled.length === 1 ? "" : "s"} running or wrapped
+          <p className="mb-0.5 text-xs font-bold tracking-wider text-cocoa-soft uppercase">
+            Welcome back, {user.name.split(" ")[0]}
           </p>
+          <h1 className="font-display text-2xl font-black tracking-tight text-cocoa sm:text-3xl">
+            Your Group Decisions
+          </h1>
         </div>
         <Link
           href="/create"
-          className="btn-game-piece rounded-full bg-tangerine-deep px-6 py-3 font-display text-lg font-bold text-cream"
+          className="btn-game-piece inline-flex items-center gap-1.5 rounded-xl border-cocoa-sm bg-tangerine-deep px-3.5 py-1.5 text-xs font-bold text-cream transition-colors hover:bg-tangerine sm:rounded-full sm:px-4 sm:py-2 sm:text-sm"
         >
-          + New poll
+          <Plus aria-hidden="true" size={15} strokeWidth={2.6} />
+          <span className="hidden sm:inline">New poll</span>
+          <span className="sm:hidden">New</span>
         </Link>
       </div>
 
       {user.isGuest && (
-        <div className="mt-6 rounded-2xl border-cocoa bg-teal-soft p-4">
+        <div className="mb-6 border-cocoa rounded-[22px] bg-teal-soft p-4 shadow-sm">
           <p className="font-display font-bold text-teal-deep">
             You&apos;re in the demo — this is Morgan&apos;s account.
           </p>
@@ -128,71 +156,76 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <section className="mt-8" aria-labelledby="open-heading">
-        <h2 id="open-heading" className="font-display text-xl font-bold text-cocoa">
-          Open
-          <span className="ml-2 text-cocoa-soft">({open.length})</span>
-        </h2>
-        {open.length === 0 ? (
-          <Empty label="Nothing open right now." />
-        ) : (
-          <ul className="mt-3 space-y-3">
-            {open.map((poll) => (
-              <DashboardPollCard
-                key={poll.slug}
-                poll={poll}
-                shareUrl={`${APP_URL}/p/${poll.slug}`}
-              />
-            ))}
-          </ul>
-        )}
-      </section>
+      {featured && (
+        <Link
+          href={`/p/${featured.slug}`}
+          className="group mb-6 block rounded-[22px] border-cocoa bg-cream-deep p-4 shadow-sm transition-all hover:border-tangerine sm:p-5"
+        >
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-tangerine px-3 py-0.5 text-xs font-extrabold tracking-wide text-cream">
+              <Flame size={13} strokeWidth={2.5} aria-hidden="true" />
+              Needs attention · closing soonest
+            </span>
+            {featured.pendingSuggestions > 0 && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-cocoa/30 bg-butter px-2.5 py-0.5 text-xs font-bold text-cocoa">
+                {featured.pendingSuggestions} pending suggestion
+                {featured.pendingSuggestions === 1 ? "" : "s"}
+              </span>
+            )}
+          </div>
 
-      <section className="mt-10" aria-labelledby="settled-heading">
-        <h2 id="settled-heading" className="font-display text-xl font-bold text-cocoa">
-          Settled
-          <span className="ml-2 text-cocoa-soft">({settled.length})</span>
-        </h2>
-        {settled.length === 0 ? (
-          <Empty label="Nothing wrapped yet." />
-        ) : (
-          <ul className="mt-3 space-y-3">
-            {settled.map((poll) => (
-              <DashboardPollCard
-                key={poll.slug}
-                poll={poll}
-                shareUrl={`${APP_URL}/p/${poll.slug}`}
-              />
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {retired.length > 0 && (
-        <section className="mt-10" aria-labelledby="retired-heading">
-          <h2 id="retired-heading" className="font-display text-xl font-bold text-cocoa">
-            Retired
-            <span className="ml-2 text-cocoa-soft">({retired.length})</span>
+          <h2 className="mb-2 font-display text-xl font-black leading-snug text-cocoa transition-colors group-hover:text-tangerine sm:text-2xl">
+            {featured.title}
           </h2>
-          <ul className="mt-3 space-y-3">
-            {retired.map((poll) => (
-              <DashboardPollCard
-                key={poll.slug}
-                poll={poll}
-                shareUrl={`${APP_URL}/p/${poll.slug}`}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
-    </div>
-  );
-}
 
-function Empty({ label }: { label: string }) {
-  return (
-    <p className="mt-3 rounded-xl border-2 border-dashed border-cocoa/30 px-4 py-6 text-center text-cocoa-soft">
-      {label}
-    </p>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-cocoa/10 pt-2 text-xs font-semibold text-cocoa-soft sm:text-sm">
+            <span className="flex items-center gap-1.5">
+              <Clock size={15} className="text-tangerine" aria-hidden="true" />
+              <span className="font-bold text-cocoa">
+                Closes {closesInCompact(featured.closesAt)}
+              </span>
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="tabular-nums font-bold text-cocoa">
+                {featured.voteCount} vote{featured.voteCount === 1 ? "" : "s"}
+              </span>
+              {featured.pendingSuggestions === 0 && (
+                <span className="text-teal-deep">
+                  {featured.voteCount > 0 ? "Live race" : "No votes yet"}
+                </span>
+              )}
+            </span>
+          </div>
+        </Link>
+      )}
+
+      <DashboardTabs
+        defaultTab="open"
+        tabs={[
+          {
+            key: "open",
+            label: "Open",
+            count: open.length,
+            children: <PollList polls={open} shareUrl={`${APP_URL}/p`} />,
+          },
+          {
+            key: "settled",
+            label: "Settled",
+            count: settled.length,
+            children: <PollList polls={settled} shareUrl={`${APP_URL}/p`} />,
+          },
+          ...(retired.length > 0
+            ? [
+                {
+                  key: "retired" as const,
+                  label: "Retired",
+                  count: retired.length,
+                  children: <PollList polls={retired} shareUrl={`${APP_URL}/p`} />,
+                },
+              ]
+            : []),
+        ]}
+      />
+    </div>
   );
 }

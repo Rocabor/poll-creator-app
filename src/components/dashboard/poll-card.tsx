@@ -33,24 +33,24 @@ function winnerOf(poll: DashboardPoll): string | null {
   return winnerLabel;
 }
 
-function statusChip(poll: DashboardPoll, pending: number): React.ReactNode {
+function statusChip(poll: DashboardPoll): React.ReactNode {
   if (poll.deletedAt) {
     return (
-      <span className="rounded-full bg-cocoa/10 px-3 py-1 text-xs font-bold text-cocoa-soft uppercase tracking-wide">
+      <span className="rounded-full bg-cocoa/10 px-2.5 py-0.5 text-[11px] font-extrabold text-cocoa-soft">
         Retired
       </span>
     );
   }
   if (poll.status === "settled") {
     return (
-      <span className="rounded-full bg-butter-deep px-3 py-1 text-xs font-bold text-cocoa uppercase tracking-wide">
+      <span className="rounded-full bg-cream-deep px-2.5 py-0.5 text-[11px] font-extrabold text-cocoa-soft">
         Settled
       </span>
     );
   }
   return (
-    <span className="rounded-full bg-teal-soft px-3 py-1 text-xs font-bold text-teal-deep uppercase tracking-wide">
-      Open — closes {closesInCompact(poll.closesAt)}
+    <span className="rounded-full bg-teal-soft px-2.5 py-0.5 text-[11px] font-extrabold text-teal-deep">
+      Voting open
     </span>
   );
 }
@@ -66,60 +66,74 @@ export default function DashboardPollCard({
   const retired = Boolean(poll.deletedAt);
 
   return (
-    <li className="border-cocoa flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-card p-5">
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate font-display text-lg font-bold text-cocoa">
-          {retired ? (
-            poll.title
-          ) : (
-            <Link
-              href={`/p/${poll.slug}`}
-              className="rounded-sm hover:underline hover:decoration-tangerine hover:decoration-2"
-            >
-              {poll.title}
-            </Link>
-          )}
-        </h3>
+    <li className="group flex flex-col gap-2 rounded-[20px] border-cocoa bg-card p-4 shadow-2xs transition-all hover:border-teal">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex flex-wrap items-center gap-2">
+            {statusChip(poll)}
+            {!retired && poll.pendingSuggestions > 0 && (
+              <span className="rounded-full border border-cocoa/30 bg-butter px-2 py-0.5 text-[11px] font-bold text-cocoa">
+                {poll.pendingSuggestions} pending suggestion
+                {poll.pendingSuggestions === 1 ? "" : "s"}
+              </span>
+            )}
+          </div>
+          <h3 className="truncate font-display text-lg font-extrabold text-cocoa">
+            {retired ? (
+              poll.title
+            ) : (
+              <Link
+                href={`/p/${poll.slug}`}
+                className="rounded-sm transition-colors group-hover:text-teal"
+              >
+                {poll.title}
+              </Link>
+            )}
+          </h3>
+        </div>
+        {!retired && (
+          <CopyLink
+            url={shareUrl}
+            label={`Copy link for ${poll.title}`}
+          />
+        )}
+      </div>
 
-        <p className="mt-1 text-sm text-cocoa-soft">
+      <div className="flex items-center justify-between gap-2 border-t border-cream-deep pt-2 text-xs font-semibold text-cocoa-soft">
+        <span className="truncate">
           {poll.voteCount === 0
             ? "No votes yet"
             : `${poll.voteCount} vote${poll.voteCount === 1 ? "" : "s"} · ${poll.voterTokens} voter${poll.voterTokens === 1 ? "" : "s"}`}
           {!retired && poll.status === "settled" && poll.settledAt
-            ? ` · closed ${relativeTime(poll.settledAt)}`
+            ? ` · ${relativeTime(poll.settledAt)}`
             : ""}
-        </p>
+        </span>
 
-        {poll.status === "settled" && !retired && (
-          <p className="mt-1 text-sm font-bold text-teal-deep">
-            {winner ? `${winner} won` : "Ended in a tie"}
-          </p>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2">
-        {!retired && poll.pendingSuggestions > 0 && (
-          <span className="rounded-full bg-tangerine-deep px-3 py-1 text-xs font-bold text-cream">
-            {poll.pendingSuggestions} suggestion{poll.pendingSuggestions === 1 ? "" : "s"}
-          </span>
-        )}
-        {statusChip(poll, poll.pendingSuggestions)}
-        {!retired && (
-          <CopyLink url={shareUrl} label={`Share “${poll.title}”`} />
-        )}
-        {!retired && poll.status === "settled" && (
-          <Link
-            href={`/create?from=${poll.slug}`}
-            className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-card px-3 py-2 text-sm font-bold text-teal transition-colors hover:bg-teal-soft"
-            title="Pre-fill a new poll from this one"
-          >
-            <RefreshCcw aria-hidden="true" size={16} />
-            Run again
-          </Link>
-        )}
-        {retired && (
-          <RetiredActions slug={poll.slug} />
-        )}
+        <div className="flex shrink-0 items-center gap-1.5">
+          {poll.status === "settled" && !retired && (
+            <span className="hidden font-bold text-teal-deep sm:inline">
+              {winner ? `${winner} won` : "Ended in a tie"}
+            </span>
+          )}
+          {!retired && poll.status === "settled" && (
+            <Link
+              href={`/create?from=${poll.slug}`}
+              className="rounded-full border border-cocoa-sm bg-cream px-2.5 py-1 text-xs font-bold text-teal transition-colors hover:bg-cream-deep"
+              title="Pre-fill a new poll from this one"
+            >
+              Run again
+            </Link>
+          )}
+          {retired && <RetiredActions slug={poll.slug} />}
+          {!retired && (
+            <Link
+              href={`/p/${poll.slug}`}
+              className="rounded-full border border-cocoa-sm bg-cream px-2.5 py-1 text-xs font-bold text-cocoa transition-colors hover:bg-cream-deep"
+            >
+              {poll.status === "open" ? "Vote" : "View"}
+            </Link>
+          )}
+        </div>
       </div>
     </li>
   );

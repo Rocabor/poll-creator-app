@@ -126,7 +126,7 @@ export default function VoteBooth({
               announce(result.ok ? "Poll closed — results are in." : result.error ?? "Couldn't close it.");
               if (result.ok) router.refresh();
             }}
-            className="rounded-full border-cocoa-sm bg-card px-4 py-2 text-sm font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60"
+            className="rounded-full border-cocoa-sm bg-cream px-4 py-2 text-sm font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60"
           >
             End now
           </button>
@@ -211,7 +211,7 @@ export default function VoteBooth({
                 type="button"
                 onClick={submit}
                 disabled={casting}
-                className="btn-game-piece mt-5 w-full rounded-full bg-tangerine-deep px-6 py-3.5 font-display text-lg font-bold text-cream disabled:opacity-60"
+                className="btn-game-piece mt-5 w-full rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3.5 font-display text-lg font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60 sm:rounded-full"
               >
                 {casting ? "Casting…" : "Cast your vote"}
               </button>
@@ -309,7 +309,7 @@ function SuggestForm({
   }
 
   return (
-    <section aria-labelledby="suggest-heading" className="mt-8 border-cocoa rounded-2xl bg-card p-5">
+    <section aria-labelledby="suggest-heading" className="mt-8 border-cocoa rounded-[22px] bg-card p-5">
       <h2 id="suggest-heading" className="font-display text-lg font-bold text-cocoa">
         Got another idea?
       </h2>
@@ -348,7 +348,7 @@ function SuggestForm({
           <button
             type="submit"
             disabled={status === "busy"}
-            className="btn-game-piece shadow-press-teal rounded-full bg-teal px-5 py-2.5 font-display font-bold text-cream disabled:opacity-60"
+            className="btn-game-piece shadow-press-teal rounded-xl border-cocoa-sm bg-teal px-5 py-2.5 font-display font-bold text-cream transition-colors hover:bg-teal-deep disabled:opacity-60 sm:rounded-full"
           >
             {status === "busy" ? "Sending…" : "Suggest"}
           </button>
