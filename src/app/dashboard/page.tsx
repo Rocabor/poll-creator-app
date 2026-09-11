@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Clock, Flame, Plus } from "lucide-react";
+import { Clock, Flame, Plus, Sparkles, Vote } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 import { settleIfDue } from "@/lib/poll-state";
@@ -91,13 +91,58 @@ async function loadDashboard(userId: string): Promise<Grouped> {
   return grouped;
 }
 
-function PollList({ polls, shareUrl }: { polls: DashboardPoll[]; shareUrl: string }) {
+function leadingLabel(p: DashboardPoll): string | null {
+  let best = 0;
+  let label: string | null = null;
+  let tied = false;
+  for (const o of p.options) {
+    if (o.votesCount === best && best > 0) tied = true;
+    if (o.votesCount > best) {
+      best = o.votesCount;
+      label = o.label;
+      tied = false;
+    }
+  }
+  if (best === 0 || tied) return null;
+  return (label ?? "").split(" ")[0];
+}
+
+function EmptyList({
+  title,
+  body,
+  action,
+}: {
+  title: string;
+  body: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="border-cocoa rounded-[22px] bg-card p-8 text-center">
+      <div className="border-cocoa-sm mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-cream-deep text-cocoa">
+        <Vote size={24} strokeWidth={2.2} aria-hidden="true" />
+      </div>
+      <h2 className="mb-1 font-display text-xl font-extrabold text-cocoa">{title}</h2>
+      <p className="mx-auto mb-4 max-w-sm text-xs text-cocoa-soft sm:text-sm">{body}</p>
+      {action}
+    </div>
+  );
+}
+
+function PollList({
+  polls,
+  shareUrl,
+  emptyTitle,
+  emptyBody,
+  emptyAction,
+}: {
+  polls: DashboardPoll[];
+  shareUrl: string;
+  emptyTitle: string;
+  emptyBody: string;
+  emptyAction?: React.ReactNode;
+}) {
   if (polls.length === 0) {
-    return (
-      <p className="rounded-[22px] border-2 border-dashed border-cocoa/30 px-4 py-8 text-center text-sm text-cocoa-soft">
-        Nothing here yet.
-      </p>
-    );
+    return <EmptyList title={emptyTitle} body={emptyBody} action={emptyAction} />;
   }
   return (
     <ul className="flex flex-col gap-3">
@@ -120,6 +165,7 @@ export default async function DashboardPage() {
         (a, b) => new Date(a.closesAt).getTime() - new Date(b.closesAt).getTime()
       )[0]
     : null;
+  const featuredLeader = featured ? leadingLabel(featured) : null;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
@@ -167,7 +213,8 @@ export default async function DashboardPage() {
               Needs attention · closing soonest
             </span>
             {featured.pendingSuggestions > 0 && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-cocoa/30 bg-butter px-2.5 py-0.5 text-xs font-bold text-cocoa">
+              <span className="inline-flex animate-pulse items-center gap-1 rounded-full border border-cocoa/30 bg-butter px-2.5 py-0.5 text-xs font-bold text-cocoa">
+                <Sparkles size={12} strokeWidth={2.5} aria-hidden="true" />
                 {featured.pendingSuggestions} pending suggestion
                 {featured.pendingSuggestions === 1 ? "" : "s"}
               </span>
@@ -189,11 +236,14 @@ export default async function DashboardPage() {
               <span className="tabular-nums font-bold text-cocoa">
                 {featured.voteCount} vote{featured.voteCount === 1 ? "" : "s"}
               </span>
-              {featured.pendingSuggestions === 0 && (
-                <span className="text-teal-deep">
-                  {featured.voteCount > 0 ? "Live race" : "No votes yet"}
-                </span>
-              )}
+              {featured.voteCount > 0 && <span aria-hidden="true">·</span>}
+              <span className="text-teal-deep">
+                {featuredLeader
+                  ? `${featuredLeader} in the lead`
+                  : featured.voteCount > 0
+                    ? "Too close to call"
+                    : "No votes yet"}
+              </span>
             </span>
           </div>
         </Link>
@@ -204,15 +254,37 @@ export default async function DashboardPage() {
         tabs={[
           {
             key: "open",
-            label: "Open",
+            label: "Open Polls",
             count: open.length,
-            children: <PollList polls={open} shareUrl={`${APP_URL}/p`} />,
+            children: (
+              <PollList
+                polls={open}
+                shareUrl={`${APP_URL}/p`}
+                emptyTitle="No open polls right now"
+                emptyBody="Start a new decision for pizza, films, or weekend dates in under a minute."
+                emptyAction={
+                  <Link
+                    href="/create"
+                    className="btn-game-piece inline-flex rounded-full border-cocoa-sm bg-tangerine-deep px-5 py-2.5 text-sm font-bold text-cream transition-colors hover:bg-tangerine"
+                  >
+                    Create your first poll
+                  </Link>
+                }
+              />
+            ),
           },
           {
             key: "settled",
             label: "Settled",
             count: settled.length,
-            children: <PollList polls={settled} shareUrl={`${APP_URL}/p`} />,
+            children: (
+              <PollList
+                polls={settled}
+                shareUrl={`${APP_URL}/p`}
+                emptyTitle="No settled polls yet"
+                emptyBody="Decided polls will appear here with final winner attribution."
+              />
+            ),
           },
           ...(retired.length > 0
             ? [
@@ -220,7 +292,14 @@ export default async function DashboardPage() {
                   key: "retired" as const,
                   label: "Retired",
                   count: retired.length,
-                  children: <PollList polls={retired} shareUrl={`${APP_URL}/p`} />,
+                  children: (
+                    <PollList
+                      polls={retired}
+                      shareUrl={`${APP_URL}/p`}
+                      emptyTitle="No retired polls"
+                      emptyBody="Retired polls land here where you can restore or permanently delete them."
+                    />
+                  ),
                 },
               ]
             : []),

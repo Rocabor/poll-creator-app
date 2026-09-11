@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, RotateCcw, Trash2, X } from "lucide-react";
+import { Check, RotateCcw, Sparkles, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   approveSuggestion,
@@ -31,44 +31,59 @@ export default function Moderation({ poll }: { poll: PollView }) {
   }
 
   if (poll.status !== "open") return null;
+  if (pending.length === 0 && declined.length === 0) return null;
 
   return (
-    <section aria-labelledby="moderation-heading" className="mt-6 border-cocoa rounded-[22px] bg-card p-5">
-      <h2 id="moderation-heading" className="font-display text-lg font-bold text-cocoa">
-        Suggested options
-      </h2>
+    <section
+      aria-labelledby="moderation-heading"
+      className="mt-6 border-cocoa rounded-[22px] bg-butter-deep p-4 shadow-sm sm:p-5"
+    >
+      <div className="mb-2 flex items-center gap-2 text-cocoa">
+        <Sparkles size={18} strokeWidth={2.5} className="text-tangerine" aria-hidden="true" />
+        <h2 id="moderation-heading" className="font-display text-base font-extrabold sm:text-lg">
+          Pending Suggestions ({pending.length})
+        </h2>
+      </div>
+      <p className="mb-3 text-xs text-cocoa-soft">
+        Approve it and it joins the ballot with 0 votes. Your call, house rules.
+      </p>
+
       {pending.length === 0 && (
-        <p className="mt-2 text-sm text-cocoa-soft">
-          Nothing waiting. Voters pitch options here once enabled.
-        </p>
+        <p className="text-sm text-cocoa-soft">No pending suggestions right now.</p>
       )}
 
       {pending.length > 0 && (
-        <ul className="mt-3 space-y-2">
+        <ul className="space-y-2.5">
           {pending.map((s: PendingSuggestionView) => (
-            <li key={s.id} className="flex flex-wrap items-center gap-3 rounded-[18px] border border-cocoa/15 bg-cream px-3 py-2.5">
-              <Avatar name={s.suggestedBy.name} seed={s.suggestedBy.seed} tint={s.suggestedBy.tint} size={30} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-display font-bold text-cocoa">{s.label}</p>
-                <p className="text-xs text-cocoa-soft">Suggested by {s.suggestedBy.name}</p>
+            <li
+              key={s.id}
+              className="flex flex-col justify-between gap-3 rounded-xl border-cocoa-sm bg-card p-3.5 sm:flex-row sm:items-center"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <Avatar name={s.suggestedBy.name} seed={s.suggestedBy.seed} tint={s.suggestedBy.tint} size={36} />
+                <div className="min-w-0">
+                  <p className="truncate font-display text-base font-extrabold text-cocoa">{s.label}</p>
+                  <p className="text-xs font-semibold text-cocoa-soft">Suggested by {s.suggestedBy.name}</p>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  disabled={busyId === s.id}
-                  onClick={() => run(s.id, () => approveSuggestion(s.id), `“${s.label}” is on the ballot.`)}
-                  className="btn-game-piece shadow-press-teal inline-flex items-center gap-1 rounded-xl border-cocoa-sm bg-teal px-3 py-2 text-sm font-bold text-cream transition-colors hover:bg-teal-deep disabled:opacity-60 sm:rounded-full"
-                >
-                  <Check aria-hidden="true" size={16} /> Add
-                </button>
+              <div className="flex shrink-0 gap-2">
                 <button
                   type="button"
                   disabled={busyId === s.id}
                   onClick={() => run(s.id, () => declineSuggestion(s.id), `“${s.label}” declined.`)}
-                  className="inline-flex items-center gap-1 rounded-xl border-cocoa-sm bg-cream px-4 py-2 text-sm font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60 sm:rounded-full"
+                  className="rounded-full border-cocoa-sm bg-cream px-3.5 py-1.5 text-xs font-bold text-cocoa transition-colors hover:bg-cream-deep disabled:opacity-60"
                   aria-label={`Decline “${s.label}”`}
                 >
-                  <X aria-hidden="true" size={16} /> No
+                  Not this time
+                </button>
+                <button
+                  type="button"
+                  disabled={busyId === s.id}
+                  onClick={() => run(s.id, () => approveSuggestion(s.id), `“${s.label}” is on the ballot.`)}
+                  className="btn-game-piece inline-flex items-center gap-1 rounded-full border-cocoa-sm bg-teal px-4 py-1.5 text-xs font-bold text-cream transition-colors hover:bg-teal-deep disabled:opacity-60"
+                >
+                  <Check aria-hidden="true" size={14} strokeWidth={3} />
+                  Add it (joins with 0 votes)
                 </button>
               </div>
             </li>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CheckCircle2, Clock } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 import { loadPollView } from "@/lib/poll-state";
@@ -66,61 +67,58 @@ export default async function PollPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <Link
-        href="/"
-        className="text-sm font-bold text-teal underline underline-offset-2 hover:text-teal-deep"
-      >
-        ← back
-      </Link>
+      {/* Back button & quick link */}
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <Link
+          href="/"
+          className="flex items-center gap-1 rounded-md p-1 text-xs font-bold text-cocoa-soft transition-colors hover:text-cocoa"
+        >
+          ← Back to polls
+        </Link>
 
-      <header className="mt-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${
-              opensStill ? "bg-teal-soft text-teal-deep" : "bg-butter-deep text-cocoa"
-            }`}
-          >
-            {opensStill ? "Open for votes" : "Poll closed"}
-          </span>
-          {poll.isMine && (
-            <span className="rounded-full bg-cream-deep px-3 py-1 text-xs font-bold uppercase tracking-wide text-cocoa-soft">
-              Your poll
-            </span>
-          )}
-        </div>
-
-        <h1 className="riso-title mt-3 font-display text-4xl font-black text-cocoa sm:text-5xl">
-          {poll.title}
-        </h1>
-
-        <p className="mt-3 text-cocoa-soft">
-          {opensStill ? (
-            <>
-              Closes {closesInCompact(closesAt)} ({relativeTime(closesAt)})
-            </>
-          ) : poll.settledAt ? (
-            <>Closed {relativeTime(new Date(poll.settledAt))}</>
-          ) : (
-            <>Closed</>
-          )}
-          {" · "}pick up to {poll.maxChoices === 1 ? "1 option" : `${poll.maxChoices} options`}
-        </p>
-      </header>
-
-      {poll.isMine && (
-        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border-cocoa bg-card p-3">
-          <p className="min-w-0 flex-1 truncate text-sm font-bold text-cocoa">
-            Share this link in the group chat:
-          </p>
-          <code className="hidden truncate rounded-lg bg-cream-deep px-3 py-1.5 text-xs text-cocoa-soft sm:block">
-            {APP_URL}/p/{poll.slug}
-          </code>
+        {poll.isMine && (
           <CopyLink
             url={`${APP_URL}/p/${poll.slug}`}
-            label={`Share “${poll.title}”`}
+            label={`Copy link for ${poll.title}`}
+            variant="pill"
           />
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Status Pill & Live Indicator */}
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        {opensStill ? (
+          <span className="inline-flex items-center gap-2 rounded-full border-cocoa-sm bg-teal-soft px-3 py-1 text-xs font-extrabold text-teal-deep">
+            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-teal" aria-hidden="true" />
+            Voting open · Live updates
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-cream-deep px-3 py-1 text-xs font-extrabold text-cocoa-soft">
+            <CheckCircle2 size={13} strokeWidth={2.5} aria-hidden="true" />
+            Decision Settled
+          </span>
+        )}
+
+        <span className="flex items-center gap-1 text-xs font-semibold text-cocoa-soft">
+          <Clock size={13} className="text-tangerine" aria-hidden="true" />
+          {opensStill
+            ? `Closes ${closesInCompact(closesAt)} (${relativeTime(closesAt)})`
+            : poll.settledAt
+              ? `Closed ${relativeTime(new Date(poll.settledAt))}`
+              : "Closed"}
+        </span>
+
+        {poll.maxChoices > 1 && (
+          <span className="rounded-full bg-teal-soft px-2 py-0.5 text-[11px] font-extrabold text-teal-deep">
+            Pick up to {poll.maxChoices}
+          </span>
+        )}
+      </div>
+
+      {/* Main Poll Title */}
+      <h1 className="mb-5 font-display text-2xl font-black leading-tight tracking-tight text-cocoa sm:text-3xl lg:text-4xl">
+        {poll.title}
+      </h1>
 
       {opensStill ? (
         <VoteBooth poll={poll} isMine={Boolean(poll.isMine)} />

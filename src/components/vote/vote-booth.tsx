@@ -2,17 +2,23 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AlertCircle, Check, Sparkles, Vote } from "lucide-react";
 import { castVote } from "@/app/actions/votes";
-import { suggestOption } from "@/app/actions/suggestions";
 import { closeNow } from "@/app/actions/lifecycle";
 import { announce } from "@/lib/announce";
 import { usePoll } from "@/lib/use-poll";
 import Avatar from "@/components/avatar";
 import ResultsBoard from "@/components/vote/results-board";
 import Moderation from "@/components/vote/moderation";
+import SuggestModal from "@/components/vote/suggest-modal";
 import type { PollView } from "@/lib/types";
 
-const AVATAR_TINTS = ["f8c9b9", "cbe2d8", "f6e0a4", "e3d2f2"];
+const AVATAR_TINTS: { id: string; hex: string; name: string }[] = [
+  { id: "f8c9b9", hex: "#F8C9B9", name: "Peach" },
+  { id: "cbe2d8", hex: "#CBE2D8", name: "Teal" },
+  { id: "f6e0a4", hex: "#F6E0A4", name: "Butter" },
+  { id: "e3d2f2", hex: "#E3D2F2", name: "Lilac" },
+];
 
 function randomToken(): string {
   const rand = new Uint8Array(16);
@@ -45,6 +51,8 @@ export default function VoteBooth({
   const [error, setError] = useState<string | null>(null);
   const [casting, setCasting] = useState(false);
   const [justVoted, setJustVoted] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [suggestOpen, setSuggestOpen] = useState(false);
 
   const { data } = usePoll(poll.slug, token);
   const live = data?.poll ?? poll;
@@ -56,7 +64,7 @@ export default function VoteBooth({
 
   const votingOpen = live.status === "open";
 
-  const seed = useMemo(() => name.trim() || "voter", [name]);
+  const voterSeed = useMemo(() => name.trim() || "voter", [name]);
 
   function toggleOption(optionId: string) {
     setError(null);
@@ -100,6 +108,7 @@ export default function VoteBooth({
     });
 
     setCasting(false);
+    setConfirmOpen(false);
 
     if (!result.ok) {
       setError(result.error ?? "Something went wrong.");
@@ -109,13 +118,26 @@ export default function VoteBooth({
 
     localStorage.setItem(tokenKey, token);
     localStorage.setItem("tb_voter_name", name.trim());
+    localStorage.setItem("tb_voter_seed", name.trim());
     localStorage.setItem("tb_voter_tint", tint);
     setJustVoted(true);
     announce("Your vote is in. Votes are final — no take-backs.");
   }
 
+  const selectedOptions = live.options.filter((o) => selections.includes(o.id));
+  const firstPick = selectedOptions[0];
+  const ctaLabel =
+    live.type === "multi" && selectedOptions.length > 1
+      ? `Cast my ${selectedOptions.length} votes`
+      : firstPick
+        ? `Cast my vote for ${firstPick.label}`
+        : "Cast my vote";
+
+  const canCast = name.trim().length > 0 && selections.length > 0;
+  const showDock = votingOpen && !locked;
+
   return (
-    <div className="mt-8">
+    <div className={`mt-8 ${showDock ? "pb-36" : ""}`}>
       {isMine && votingOpen && (
         <div className="mb-6 flex justify-end">
           <button
@@ -128,40 +150,85 @@ export default function VoteBooth({
             }}
             className="rounded-full border-cocoa-sm bg-cream px-4 py-2 text-sm font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60"
           >
-            End now
+            End voting early
           </button>
         </div>
       )}
 
       {votingOpen && (
-        <section aria-labelledby="vote-heading">
+        <section aria-labelledby="vote-heading" className="mb-6">
           <h2 id="vote-heading" className="font-display text-2xl font-black text-cocoa">
-            {locked ? "You voted" : "Cast your vote"}
+            {locked ? "You already voted" : "Cast your vote"}
           </h2>
-          <p className="mt-1 text-sm text-cocoa-soft">
+          <p className="mt-1 mb-4 text-sm text-cocoa-soft">
             {locked
-              ? "Your picks are locked in. Here are the live numbers."
-              : "No account needed — your name is only shown to the group once the poll closes."}
+              ? "Tiebreak keeps the race honest with no takebacks. Check in on how your pick is doing."
+              : "No account needed — pick a face, vote, and pass the phone."}
           </p>
 
           {!locked ? (
-            <><Identity name={name} setName={setName} tint={tint} setTint={setTint} seed={seed} />
-
-              <div
-                role={live.type === "single" ? "radiogroup" : "group"}
-                aria-labelledby="vote-options-label"
-                className="mt-4"
+            <>
+              <section
+                aria-label="Voter identity"
+                className="shadow-2xs border-cocoa rounded-[22px] bg-card p-4"
               >
-                <h3 id="vote-options-label" className="font-display text-sm font-bold tracking-wide text-cocoa-soft uppercase">
-                  {live.type === "single"
-                    ? "Pick one"
-                    : `Pick up to ${live.maxChoices}`}
-                </h3>
-                <ul className="mt-2 space-y-2">
-                  {live.options.map((option, index) => {
+                <span className="mb-2 block font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
+                  1. Choose your game face
+                </span>
+
+                <div className="mb-3 flex items-center gap-3">
+                  <Avatar name={voterSeed} seed={voterSeed} tint={tint} size={48} />
+                  <div className="min-w-0 flex-1">
+                    <label
+                      htmlFor="voter-name"
+                      className="mb-1 block text-xs font-bold text-cocoa"
+                    >
+                      Your name
+                    </label>
+                    <input
+                      id="voter-name"
+                      type="text"
+                      autoComplete="name"
+                      value={name}
+                      maxLength={40}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. Lena"
+                      className="w-full rounded-xl border-2 border-cocoa bg-cream px-3 py-1.5 text-sm font-bold text-cocoa outline-none placeholder:font-semibold placeholder:text-cocoa-soft/60 focus:ring-2 focus:ring-teal"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-cocoa/10 pt-3">
+                  <span className="text-xs font-semibold text-cocoa-soft">Background:</span>
+                  <div className="flex items-center gap-2">
+                    {AVATAR_TINTS.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        aria-label={`Select ${t.name} background`}
+                        aria-pressed={tint === t.id}
+                        onClick={() => setTint(t.id)}
+                        className={`h-6 w-6 rounded-full border border-cocoa-sm transition-transform ${
+                          tint === t.id ? "scale-125 ring-2 ring-teal" : "hover:scale-110"
+                        }`}
+                        style={{ backgroundColor: t.hex }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              <fieldset className="mb-3">
+                <legend className="mb-2 block font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
+                  2. Cast your vote{" "}
+                  {live.type === "multi" ? `(pick up to ${live.maxChoices})` : ""}
+                </legend>
+
+                <div className="flex flex-col gap-2.5">
+                  {live.options.map((option) => {
                     const selected = selections.includes(option.id);
                     return (
-                      <li key={option.id}>
+                      <div key={option.id}>
                         <input
                           id={`opt-${option.id}`}
                           type={live.type === "single" ? "radio" : "checkbox"}
@@ -174,249 +241,189 @@ export default function VoteBooth({
                         />
                         <label
                           htmlFor={`opt-${option.id}`}
-                          className={`block cursor-pointer rounded-xl border-2 border-cocoa px-4 py-3.5 font-display font-bold transition-colors peer-has-checked:bg-teal peer-has-checked:text-cream peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-teal peer-focus-visible:outline-offset-2 ${
-                            selected ? "bg-teal text-cream" : "bg-card text-cocoa hover:bg-cream-deep"
+                          className={`flex cursor-pointer items-center justify-between gap-3 rounded-[18px] border-cocoa p-3.5 transition-all select-none peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-teal peer-focus-visible:outline-offset-2 ${
+                            selected
+                              ? "bg-cream-deep shadow-sm ring-2 ring-teal"
+                              : "bg-card hover:bg-cream"
                           }`}
                         >
-                          <span className="flex items-center gap-2">
-                            <span className="text-sm font-normal opacity-80">
-                              {String(index + 1).padStart(2, "0")}
+                          <div className="flex min-w-0 items-center gap-2.5">
+                            <span
+                              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-cocoa-sm transition-colors ${
+                                selected ? "bg-teal text-cream-bright" : "bg-cream-deep"
+                              }`}
+                            >
+                              {selected && <Check size={14} strokeWidth={3.5} aria-hidden="true" />}
                             </span>
-                            <span className="min-w-0">{option.label}</span>
-                          </span>
+                            <span className="flex min-w-0 flex-col">
+                              <span className="font-display text-base font-extrabold leading-snug text-cocoa">
+                                {option.label}
+                              </span>
+                              {option.suggestedBy && (
+                                <span className="mt-0.5 flex items-center gap-1 text-[11px] font-semibold text-cocoa-soft">
+                                  <Avatar
+                                    name={option.suggestedBy.name}
+                                    seed={option.suggestedBy.seed}
+                                    tint={option.suggestedBy.tint}
+                                    size={14}
+                                  />
+                                  Suggested by {option.suggestedBy.name}
+                                </span>
+                              )}
+                            </span>
+                          </div>
                         </label>
-
-                        {option.suggestedBy && (
-                          <p className="mt-1 pl-2 text-xs font-bold text-cocoa-soft">
-                            Suggested by {option.suggestedBy.name}
-                          </p>
-                        )}
-                      </li>
+                      </div>
                     );
                   })}
-                </ul>
-              </div>
+                </div>
+              </fieldset>
 
               {error && (
                 <p
                   id="vote-error"
                   role="alert"
-                  className="mt-3 rounded-lg bg-tangerine/10 px-3 py-2 text-sm font-bold text-tangerine-deep"
+                  className="mb-4 flex items-center gap-2 rounded-xl border-2 border-cocoa bg-cream-deep px-3 py-2.5 text-xs font-bold text-cocoa"
                 >
+                  <AlertCircle size={16} strokeWidth={2.5} className="shrink-0 text-tangerine" />
                   {error}
                 </p>
               )}
 
-              <button
-                type="button"
-                onClick={submit}
-                disabled={casting}
-                className="btn-game-piece mt-5 w-full rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3.5 font-display text-lg font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60 sm:rounded-full"
-              >
-                {casting ? "Casting…" : "Cast your vote"}
-              </button>
-
-              <p className="mt-2 text-center text-xs text-cocoa-soft">
-                Votes are final — the poll closes to voting when the deadline passes.
-              </p>
+              {live.suggestionsEnabled && (
+                <div className="mb-4 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setSuggestOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-lg p-2 text-xs font-bold text-cocoa-soft transition-colors hover:bg-cream-deep hover:text-cocoa"
+                  >
+                    <Sparkles size={14} strokeWidth={2.4} className="text-tangerine" />
+                    Don&apos;t see what you want? Suggest an option
+                  </button>
+                </div>
+              )}
             </>
           ) : (
-            <div className="mt-4 rounded-xl border-cocoa bg-teal-soft p-4">
-              <p className="font-display font-bold text-teal-deep">Your pick{myVotes.length === 1 ? "" : "s"}:</p>
-              <ul className="mt-2 space-y-1">
+            <div className="shadow-2xs border-cocoa rounded-2xl bg-card p-4">
+              <span className="mb-1.5 block text-xs font-bold tracking-wide text-cocoa-soft uppercase">
+                You backed:
+              </span>
+              <div className="flex flex-col gap-1.5">
                 {live.options
                   .filter((o) => myVotes.includes(o.id))
                   .map((o) => (
-                    <li key={o.id} className="font-bold text-teal-deep">
-                      {o.label}
-                    </li>
+                    <div
+                      key={o.id}
+                      className="flex items-center gap-2 rounded-xl border border-cocoa/10 bg-cream p-2 font-display text-base font-black text-cocoa"
+                    >
+                      <Check size={16} strokeWidth={3} className="shrink-0 text-teal-deep" />
+                      <span>{o.label}</span>
+                    </div>
                   ))}
-              </ul>
+              </div>
             </div>
           )}
         </section>
       )}
 
-      <div className="mt-10">
-        <ResultsBoard poll={live} showBackers={live.status === "settled"} />
-      </div>
+      <ResultsBoard poll={live} showBackers={live.status === "settled"} />
 
-      {votingOpen && isMine && (
-        <Moderation poll={live} />
+      {votingOpen && isMine && <Moderation poll={live} />}
+
+      {showDock && (
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-cocoa/15 bg-cream/95 p-2.5 backdrop-blur-md sm:p-4">
+          <div className="mx-auto max-w-md">
+            <button
+              type="button"
+              disabled={!canCast || casting}
+              onClick={() => setConfirmOpen(true)}
+              className="btn-game-piece flex h-11 w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-4 font-display text-sm font-bold text-cream shadow-sm transition-all hover:bg-tangerine active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:rounded-full sm:px-5 sm:text-base"
+            >
+              <Vote size={16} strokeWidth={2.5} aria-hidden="true" />
+              <span className="truncate">{ctaLabel}</span>
+            </button>
+          </div>
+        </div>
       )}
 
-      {votingOpen && !isMine && live.suggestionsEnabled && (
-        <SuggestForm
+      {confirmOpen && votingOpen && !locked && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
+          <div
+            className="absolute inset-0 bg-cocoa/50"
+            onClick={casting ? undefined : () => setConfirmOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="vote-confirm-title"
+            className="border-cocoa relative w-full max-w-sm rounded-[22px] bg-card p-5 shadow-xl"
+          >
+            <span className="mb-1 block font-display text-xs font-bold tracking-wider text-tangerine-deep uppercase">
+              Confirm your vote
+            </span>
+            <h3 id="vote-confirm-title" className="font-display text-xl font-extrabold text-cocoa">
+              Lock it in?
+            </h3>
+            <p className="mt-1 text-xs text-cocoa-soft sm:text-sm">
+              Votes are final the moment they land — no takebacks, no edits.
+            </p>
+
+            <div className="mt-4 flex items-center gap-3 rounded-xl border border-cocoa/10 bg-cream p-3">
+              <Avatar name={voterSeed} seed={voterSeed} tint={tint} size={38} />
+              <div className="min-w-0 flex-1">
+                <span className="block truncate font-display font-bold text-sm text-cocoa">
+                  {name.trim()}
+                </span>
+                <span className="block text-xs text-cocoa-soft">
+                  Voting on {live.title}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-2 flex flex-col gap-1.5">
+              {selectedOptions.map((o) => (
+                <div
+                  key={o.id}
+                  className="flex items-center gap-2 rounded-xl bg-cream-deep p-2 font-display text-sm font-extrabold text-cocoa"
+                >
+                  <Check size={16} strokeWidth={3} className="shrink-0 text-teal-deep" />
+                  <span>{o.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                disabled={casting}
+                onClick={() => setConfirmOpen(false)}
+                className="rounded-full border-cocoa-sm bg-cream px-4 py-2 text-xs font-bold text-cocoa transition-colors hover:bg-cream-deep disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={casting}
+                onClick={submit}
+                className="btn-game-piece rounded-full border-cocoa-sm bg-tangerine-deep px-4 py-2 text-xs font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60"
+              >
+                {casting ? "Casting…" : "Cast my vote"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!isMine && votingOpen && live.suggestionsEnabled && (
+        <SuggestModal
+          open={suggestOpen}
           slug={poll.slug}
+          voter={{ name: name.trim() || "a friend", seed: name.trim() || "voter", tint }}
           token={token}
-          name={name.trim()}
-          tint={tint}
+          onClose={() => setSuggestOpen(false)}
         />
       )}
-    </div>
-  );
-}
-
-function SuggestForm({
-  slug,
-  token,
-  name,
-  tint,
-}: {
-  slug: string;
-  token: string;
-  name: string;
-  tint: string;
-}) {
-  const [label, setLabel] = useState("");
-  const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">("idle");
-  const [message, setMessage] = useState("");
-
-  async function submit() {
-    const trimmed = label.trim();
-    if (trimmed.length < 2) {
-      setStatus("error");
-      setMessage("Type the option first.");
-      announce("Type the option first.");
-      return;
-    }
-    if (!name) {
-      setStatus("error");
-      setMessage("Add your name at the top first.");
-      announce("Add your name before suggesting.");
-      return;
-    }
-
-    setStatus("busy");
-    const result = await suggestOption({
-      slug,
-      label: trimmed,
-      name,
-      seed: name,
-      tint,
-      token,
-    });
-
-    if (!result.ok) {
-      setStatus("error");
-      setMessage(result.error ?? "Couldn't send that.");
-      announce(result.error ?? "Couldn't send that.");
-      return;
-    }
-    setLabel("");
-    setStatus("done");
-    announce("Option suggested — the creator will review it.");
-  }
-
-  return (
-    <section aria-labelledby="suggest-heading" className="mt-8 border-cocoa rounded-[22px] bg-card p-5">
-      <h2 id="suggest-heading" className="font-display text-lg font-bold text-cocoa">
-        Got another idea?
-      </h2>
-      <p className="mt-1 text-sm text-cocoa-soft">
-        Suggest an option — {name ? `${name.split(" ")[0]}, it'll` : "it'll"} be
-        marked “Suggested by you” and the creator can add it to the ballot.
-      </p>
-
-      {status === "done" ? (
-        <p className="mt-3 rounded-lg bg-teal-soft px-3 py-2 text-sm font-bold text-teal-deep">
-          Sent! The creator will review it.
-        </p>
-      ) : (
-        <form
-          className="mt-3 flex flex-wrap items-center gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            submit();
-          }}
-        >
-          <label htmlFor="suggestion-label" className="sr-only">
-            Suggest an option
-          </label>
-          <input
-            id="suggestion-label"
-            type="text"
-            value={label}
-            maxLength={60}
-            onChange={(e) => {
-              setLabel(e.target.value);
-              setStatus("idle");
-            }}
-            placeholder="Add your idea…"
-            className="min-w-0 flex-1 rounded-lg border-cocoa-sm bg-cream px-3 py-2.5 focus:border-teal"
-          />
-          <button
-            type="submit"
-            disabled={status === "busy"}
-            className="btn-game-piece shadow-press-teal rounded-xl border-cocoa-sm bg-teal px-5 py-2.5 font-display font-bold text-cream transition-colors hover:bg-teal-deep disabled:opacity-60 sm:rounded-full"
-          >
-            {status === "busy" ? "Sending…" : "Suggest"}
-          </button>
-        </form>
-      )}
-
-      {status === "error" && (
-        <p role="alert" className="mt-2 text-sm font-bold text-tangerine-deep">
-          {message}
-        </p>
-      )}
-    </section>
-  );
-}
-
-function Identity({
-  name,
-  setName,
-  tint,
-  setTint,
-  seed,
-}: {
-  name: string;
-  setName: (v: string) => void;
-  tint: string;
-  setTint: (v: string) => void;
-  seed: string;
-}) {
-  return (
-    <div className="mt-4">
-      <label htmlFor="voter-name" className="block text-sm font-bold text-cocoa">
-        What&apos;s your name?
-      </label>
-      <input
-        id="voter-name"
-        type="text"
-        autoComplete="name"
-        value={name}
-        maxLength={40}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Priya, Kai, Jonah…"
-        className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 text-lg focus:border-teal"
-      />
-
-      <fieldset className="mt-3">
-        <legend className="text-sm font-bold text-cocoa">Pick a face</legend>
-        <div className="mt-2 flex flex-wrap gap-3">
-          {AVATAR_TINTS.map((t) => (
-            <label
-              key={t}
-              className={`flex cursor-pointer items-center gap-2 rounded-full border-2 px-3 py-1.5 text-sm font-bold transition-colors has-checked:bg-teal has-checked:text-cream ${
-                tint === t ? "bg-teal text-cream" : "border-cocoa bg-card text-cocoa hover:bg-cream-deep"
-              }`}
-            >
-              <input
-                type="radio"
-                name="avatar-tint"
-                value={t}
-                checked={tint === t}
-                onChange={() => setTint(t)}
-                className="sr-only"
-              />
-              <Avatar name={seed} seed={seed} tint={t} size={24} />
-              {t === "cbe2d8" ? "Teal" : t === "f8c9b9" ? "Peach" : t === "f6e0a4" ? "Butter" : "Lilac"}
-            </label>
-          ))}
-        </div>
-      </fieldset>
     </div>
   );
 }
