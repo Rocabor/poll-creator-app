@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { SafeUser } from "@/lib/auth";
 import Avatar from "@/components/avatar";
+import { logoutAction } from "@/app/actions/auth";
 
 const LINKS = [
   { href: "/auth/login", label: "Log in" },
@@ -21,17 +22,28 @@ export default function SiteHeader({ user }: { user: SafeUser | null }) {
 
         <nav aria-label="Account" className="flex items-center gap-2 sm:gap-3">
           {user ? (
-            <span className="flex items-center gap-2">
-              <Avatar
-                name={user.name}
-                seed={user.avatarSeed}
-                tint={user.avatarTint}
-                size={32}
-              />
-              <span className="hidden text-sm font-bold text-cocoa sm:inline">
-                {user.name}
+            <>
+              <span className="flex items-center gap-2">
+                <Avatar
+                  name={user.name}
+                  seed={user.avatarSeed}
+                  tint={user.avatarTint}
+                  size={32}
+                />
+                <span className="hidden text-sm font-bold text-cocoa sm:inline">
+                  {user.name}
+                  {user.isGuest ? " (demo)" : ""}
+                </span>
               </span>
-            </span>
+              <form action={logoutAction}>
+                <button
+                  type="submit"
+                  className="rounded-lg border-cocoa-sm bg-card px-3 py-2 text-sm font-bold text-cocoa transition-colors hover:bg-cream-deep"
+                >
+                  Log out
+                </button>
+              </form>
+            </>
           ) : (
             LINKS.map((link) => (
               <Link
