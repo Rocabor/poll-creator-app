@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["tiebreak"]
 }
 
 model User {
@@ -23,6 +24,8 @@ model User {
   createdAt    DateTime  @default(now())
   polls        Poll[]
   sessions     Session[]
+
+  @@schema("tiebreak")
 }
 
 model Session {
@@ -33,6 +36,8 @@ model Session {
   expiresAt DateTime
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("tiebreak")
 }
 
 model Poll {
@@ -55,6 +60,8 @@ model Poll {
   creator         User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   options     Option[]
   votes       Vote[]
+
+  @@schema("tiebreak")
 }
 
 model Option {
@@ -71,6 +78,7 @@ model Option {
   votes            Vote[]
 
   @@index([pollId, displayOrder])
+  @@schema("tiebreak")
 }
 
 model Vote {
@@ -88,4 +96,5 @@ model Vote {
   // Casual (not forensic) vote integrity: one voter token per poll.
   @@unique([pollId, voterToken])
   @@index([optionId])
+  @@schema("tiebreak")
 }

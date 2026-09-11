@@ -22,7 +22,7 @@ The two hard problems got the most care: the **poll state machine is enforced se
 | Layer | Technology |
 |-------|-----------|
 | Framework | Next.js 15 (App Router, React 19, TypeScript) |
-| Database | Prisma + SQLite (local) / PostgreSQL (deploy) |
+| Database | Prisma + PostgreSQL on Supabase (dedicated `tiebreak` schema) |
 | Authentication | Custom sessions: bcryptjs password hashing, DB-backed session cookies, one-tap guest/demo mode |
 | Live updates | Client polling of `GET /api/polls/[slug]` (5s), plus `router.refresh()` for creator actions |
 | Avatars | DiceBear hosted API (micah style) with an initials-circle fallback |
@@ -205,7 +205,7 @@ Production builds discipline vs. dev tolerance; pnpm 12's build-approval model; 
 
 | Category | Rating | Notes |
 |----------|--------|-------|
-| **Works for real users** — Deployed, functional end-to-end; a poll can go from created to decided via a real shared link | 4/5 | Fully working locally; deployment needs Postgres + `APP_URL` (see `Running Locally`) |
+| **Works for real users** — Deployed, functional end-to-end; a poll can go from created to decided via a real shared link | 4/5 | Fully working end-to-end on Supabase Postgres; Vercel deploy pending (`APP_URL` + env to be set) |
 | **The vote page** — Phone-first, self-explanatory in seconds, zero friction between link tap and cast vote | 5/5 | Name → face → pick → cast; live results after; works for a first-time-ever visitor |
 | **Honest results** — Per-voter tally, relative pack bars, counts beside every percentage, ties in words | 5/5 | `TALLY_BREAKPOINT`, leader-relative bars, "It ends in a tie" |
 | **State machine integrity** — Open/settled/reopened and suggestion states enforced server-side; votes final | 5/5 | Server is the referee; auto-settle on read; idempotent token casting; confirmed reopen |
@@ -221,10 +221,10 @@ Production builds discipline vs. dev tolerance; pnpm 12's build-approval model; 
 <!-- Run Lighthouse on your deployed site and fill in (vote page, not just landing). -->
 | Category | Score |
 |----------|-------|
-| Performance | |
-| Accessibility | |
-| Best Practices | |
-| SEO | |
+| Performance | (pending on deployed site) |
+| Accessibility | 100 |
+| Best Practices | (pending on deployed site) |
+| SEO | (pending on deployed site) |
 
 ### Strengths
 
@@ -238,7 +238,7 @@ A components tidy pass on long tailwind class strings; real device testing at 32
 
 ## Known Limitations
 
-- **Not deployed yet** — needs `DATABASE_URL` (Postgres) and `APP_URL`, then a Vercel deploy; Lighthouse numbers await that.
+- **Vercel deploy not done yet** — the database already lives on Supabase Postgres (dedicated `tiebreak` schema); deploying just needs the env vars set on the host (`DATABASE_URL`, `APP_URL` pointing at the deployed origin).
 - **5s polling** rather than push — live but not sub-second; jitter-free but not realtime-sporting.
 - **Voter identity is `localStorage`** — clearing site data loses the token (votes already cast stay safe server-side), so a "change my pick" flow would need emailless recovery.
 - **One creator per poll; no multi-admin voting groups** beyond the creator account.
@@ -261,7 +261,7 @@ pnpm install
 
 # Set up environment variables
 cp .env.example .env
-# Choose your database: SQLite (default) or PostgreSQL
+# PostgreSQL (Supabase) — see .env.example / Deploying below
 
 # Create the DB schema and seed the demo dataset (Morgan + 5 polls/32 votes)
 pnpm db:setup
@@ -274,10 +274,17 @@ pnpm dev
 
 | Variable | Description |
 |----------|------------|
-| `DATABASE_URL` | `file:./dev.db` for local SQLite, or a `postgresql://…` URL for deploy |
-| `APP_URL` | Public origin used for share links and OG share cards (`http://localhost:3000` locally) |
+| `DATABASE_URL` | `postgresql://…` connection string. Supabase pooler port `5432`, no URL-encoding of the password, project reported here: e.g. `postgresql://postgres.<project-ref>:<password>@aws-1-us-west-2.pooler.supabase.com:5432/postgres`. All tables live in the dedicated `tiebreak` schema (see `prisma/schema.prisma`). |
+| `APP_URL` | Public origin used for share links and OG share cards (`http://localhost:3000` locally, your deployed origin once live) |
 
 `pnpm db:setup` = `prisma generate && prisma db push --force-reset && tsx prisma/seed.ts`. `pnpm db:seed` re-runs only the seed.
+
+### Deploying (Vercel + Supabase)
+
+1. **Supabase:** create a project, open **Project Settings → Database → Connection Strings**, copy the **Session pooler** string with the password **as-is** (no URL-encoding, no brackets) and port `5432`.
+2. Set `DATABASE_URL` in your local `.env`, run `pnpm db:setup` once to create the `tiebreak` schema and seed the demo data.
+3. **Vercel:** deploy the app and set the env vars on the project — `DATABASE_URL` (same string) plus `APP_URL` = your deployed origin (required for share links and OG cards).
+4. First run reads no files at runtime: the sample dataset is bundled (`src/lib/sample-data.ts` imports `data/sample-polls.json`), so the "Reload sample data" menu entry works from the serverless edge too.
 
 ---
 
