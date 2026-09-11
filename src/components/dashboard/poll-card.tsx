@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RefreshCcw } from "lucide-react";
 import CopyLink from "@/components/copy-link";
 import RetiredActions from "@/components/dashboard/retired-actions";
 import { closesInCompact, relativeTime } from "@/lib/time";
@@ -105,6 +106,16 @@ export default function DashboardPollCard({
         {statusChip(poll, poll.pendingSuggestions)}
         {!retired && (
           <CopyLink url={shareUrl} label={`Share “${poll.title}”`} />
+        )}
+        {!retired && poll.status === "settled" && (
+          <Link
+            href={`/create?from=${poll.slug}`}
+            className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-card px-3 py-2 text-sm font-bold text-teal transition-colors hover:bg-teal-soft"
+            title="Pre-fill a new poll from this one"
+          >
+            <RefreshCcw aria-hidden="true" size={16} />
+            Run again
+          </Link>
         )}
         {retired && (
           <RetiredActions slug={poll.slug} />

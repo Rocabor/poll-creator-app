@@ -43,6 +43,15 @@ const TEMPLATES: Template[] = [
   },
 ];
 
+/** Pre-fill from a poll the creator already ran (the "re-run" quick start). */
+export interface InitialPoll {
+  title?: string;
+  options?: string[];
+  type?: "single" | "multi";
+  maxChoices?: number;
+  suggestions?: boolean;
+}
+
 type DeadlinePreset = "tonight" | "tomorrow" | "one-day" | "custom";
 
 function presetClosesAt(preset: DeadlinePreset): { value: string; label: string } {
@@ -74,16 +83,27 @@ function toDatetimeLocal(iso: string): string {
   )}:${pad(d.getMinutes())}`;
 }
 
-export default function PollForm() {
+export default function PollForm({ initial }: { initial?: InitialPoll }) {
   const [state, formAction, pending] = useActionState(createPollAction, initialState);
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState<"single" | "multi">("single");
-  const [maxChoices, setMaxChoices] = useState(2);
-  const [options, setOptions] = useState<string[]>(["", ""]);
-  const [suggestions, setSuggestions] = useState(true);
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [type, setType] = useState<"single" | "multi">(initial?.type ?? "single");
+  const [maxChoices, setMaxChoices] = useState(
+    initial?.maxChoices && initial.maxChoices >= 2 ? initial.maxChoices : 2
+  );
+  const [options, setOptions] = useState<string[]>(
+    initial?.options && initial.options.length >= MIN_OPTIONS
+      ? initial.options
+      : ["", ""]
+  );
+  const [suggestions, setSuggestions] = useState(
+    initial?.suggestions ?? true
+  );
   const [preset, setPreset] = useState<DeadlinePreset>("tonight");
   const [custom, setCustom] = useState("");
-  const [appliedTemplate, setAppliedTemplate] = useState<string | null>(null);
+  const [appliedTemplate, setAppliedTemplate] = useState<string | null>(
+    initial?.title ? "rerun" : null
+  );
+  const rerunning = Boolean(initial?.title);
 
   const closesAt = preset === "custom" ? custom : presetClosesAt(preset).value;
 
@@ -129,6 +149,12 @@ export default function PollForm() {
           className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 font-display text-lg text-cocoa focus:border-teal"
         />
       </div>
+
+      {rerunning && (
+        <p className="rounded-lg bg-butter/50 px-3 py-2 text-sm font-bold text-cocoa">
+          Re-running a past poll — tweak anything before you share it again.
+        </p>
+      )}
 
       <fieldset>
         <legend className="text-sm font-bold text-cocoa">Quick start</legend>

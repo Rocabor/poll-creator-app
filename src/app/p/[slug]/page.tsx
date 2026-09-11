@@ -24,7 +24,30 @@ export async function generateMetadata({
     select: { title: true, deletedAt: true },
   });
   if (!poll || poll.deletedAt) return { title: "Poll not found" };
-  return { title: poll.title };
+  return {
+    title: `${poll.title} · Tiebreak`,
+    description:
+      "A group poll that lives in the chat. Tap to vote — no account needed, names land with the results.",
+    openGraph: {
+      title: poll.title,
+      type: "website",
+      url: new URL(`/p/${slug}`, APP_URL).toString(),
+      images: [
+        {
+          url: new URL(`/api/og/${slug}`, APP_URL).toString(),
+          width: 1200,
+          height: 630,
+          alt: `Tiebreak poll: ${poll.title}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: poll.title,
+      description: "Group votes that live in the chat.",
+      images: [new URL(`/api/og/${slug}`, APP_URL).toString()],
+    },
+  };
 }
 
 export default async function PollPage({
