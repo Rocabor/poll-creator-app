@@ -35,7 +35,7 @@ function SegmentedTally({
         <span
           key={i}
           aria-hidden="true"
-          className={`h-5 min-w-[6px] max-w-[28px] flex-1 rounded-[3px] border transition-colors ${
+          className={`h-5 min-w-1.5 max-w-7 flex-1 rounded-[3px] border transition-colors ${
             i < votes
               ? "border-cocoa/40 bg-butter"
               : onLight
@@ -67,7 +67,7 @@ function LeaderCard({
   return (
     <article
       aria-label={`${ribbon}: ${option.label}`}
-      className="border-cocoa relative rounded-[22px] bg-tangerine p-4 text-cream-bright shadow-md transition-all sm:p-6"
+      className="border-cocoa relative rounded-lg bg-tangerine p-4 text-cream-bright shadow-md transition-all sm:p-6"
     >
       <span className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-butter px-3 py-1 text-xs font-bold tracking-wider text-cocoa uppercase">
         {ribbon}
@@ -145,7 +145,7 @@ function PackList({
   return (
     <section
       aria-label="Trailing options"
-      className="border-cocoa rounded-[22px] bg-card p-4 shadow-sm sm:p-5"
+      className="border-cocoa rounded-lg bg-card p-4 shadow-sm sm:p-5"
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b-2 border-cream-deep pb-2">
         <h3 className="font-display text-sm font-bold tracking-wider text-cocoa-soft uppercase">
@@ -172,7 +172,7 @@ function PackList({
               </span>
             </div>
 
-            <div className="h-3.5 w-full rounded-full border border-cocoa/20 bg-cream-deep p-[2px]">
+            <div className="h-3.5 w-full rounded-full border border-cocoa/20 bg-cream-deep p-0.5">
               <div
                 className="h-full rounded-full bg-teal transition-all duration-300"
                 style={{ width: `${option.relativePercentageToLeader}%` }}
@@ -230,7 +230,7 @@ export default function ResultsBoard({ poll, showBackers = false }: ResultsBoard
       </div>
 
       {poll.totalVotes === 0 && (
-        <p className="mt-3 rounded-[22px] border-2 border-dashed border-cocoa/30 px-4 py-6 text-center text-cocoa-soft">
+        <p className="mt-3 rounded-lg border-2 border-dashed border-cocoa/30 px-4 py-6 text-center text-cocoa-soft">
           No votes yet — first vote wins the table.
         </p>
       )}

@@ -117,7 +117,7 @@ function EmptyList({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="border-cocoa rounded-[22px] bg-card p-8 text-center">
+    <div className="border-cocoa rounded-lg bg-card p-8 text-center">
       <div className="border-cocoa-sm mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-cream-deep text-cocoa">
         <Vote size={24} strokeWidth={2.2} aria-hidden="true" />
       </div>
@@ -189,7 +189,7 @@ export default async function DashboardPage() {
       </div>
 
       {user.isGuest && (
-        <div className="mb-6 border-cocoa rounded-[22px] bg-teal-soft p-4 shadow-sm">
+        <div className="mb-6 border-cocoa rounded-lg bg-teal-soft p-4 shadow-sm">
           <p className="font-display font-bold text-teal-deep">
             You&apos;re in the demo — this is Morgan&apos;s account.
           </p>
@@ -205,7 +205,7 @@ export default async function DashboardPage() {
       {featured && (
         <Link
           href={`/p/${featured.slug}`}
-          className="group mb-6 block rounded-[22px] border-cocoa bg-cream-deep p-4 shadow-sm transition-all hover:border-tangerine sm:p-5"
+          className="group mb-6 block rounded-lg border-cocoa bg-cream-deep p-4 shadow-sm transition-all hover:border-tangerine sm:p-5"
         >
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-tangerine px-3 py-0.5 text-xs font-extrabold tracking-wide text-cream">

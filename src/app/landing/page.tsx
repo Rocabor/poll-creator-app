@@ -73,7 +73,7 @@ export default function LandingPage() {
         {PILLARS.map((pillar) => (
           <div
             key={pillar.title}
-            className="border-cocoa rounded-[22px] bg-card p-5 shadow-xs"
+            className="border-cocoa rounded-lg bg-card p-5 shadow-xs"
           >
             <span
               className={`mb-3 flex h-10 w-10 items-center justify-center rounded-full border-cocoa-sm ${pillar.iconClass}`}
@@ -89,7 +89,7 @@ export default function LandingPage() {
       </section>
 
       {/* Guest Mode Callout */}
-      <section className="border-cocoa relative overflow-hidden rounded-[22px] bg-cream-deep p-6 text-center sm:p-8">
+      <section className="border-cocoa relative overflow-hidden rounded-lg bg-cream-deep p-6 text-center sm:p-8">
         <div className="mx-auto max-w-md">
           <span className="mb-1 block font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
             Pre-loaded with real group data

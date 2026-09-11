@@ -36,7 +36,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
   return (
     <section
       aria-labelledby="moderation-heading"
-      className="mt-6 border-cocoa rounded-[22px] bg-butter-deep p-4 shadow-sm sm:p-5"
+      className="mt-6 border-cocoa rounded-lg bg-butter-deep p-4 shadow-sm sm:p-5"
     >
       <div className="mb-2 flex items-center gap-2 text-cocoa">
         <Sparkles size={18} strokeWidth={2.5} className="text-tangerine" aria-hidden="true" />

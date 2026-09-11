@@ -74,7 +74,7 @@ export default function Reveal({
     <div className="mt-8">
       <section
         aria-labelledby="reveal-heading"
-        className="border-cocoa rounded-[22px] bg-card p-6"
+        className="border-cocoa rounded-lg bg-card p-6"
       >
         <p className="font-display text-sm font-bold tracking-widest text-cocoa-soft uppercase">
           Poll closed
@@ -175,7 +175,7 @@ export default function Reveal({
       </div>
 
       {isMine && (
-        <div className="mt-8 border-cocoa rounded-[22px] bg-cream-deep p-4 sm:p-5">
+        <div className="mt-8 border-cocoa rounded-lg bg-cream-deep p-4 sm:p-5">
           <h3 className="font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
             Organizer actions
           </h3>

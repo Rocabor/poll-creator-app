@@ -170,7 +170,7 @@ export default function VoteBooth({
             <>
               <section
                 aria-label="Voter identity"
-                className="shadow-2xs border-cocoa rounded-[22px] bg-card p-4"
+                className="shadow-2xs border-cocoa rounded-lg bg-card p-4"
               >
                 <span className="mb-2 block font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
                   1. Choose your game face
@@ -241,7 +241,7 @@ export default function VoteBooth({
                         />
                         <label
                           htmlFor={`opt-${option.id}`}
-                          className={`flex cursor-pointer items-center justify-between gap-3 rounded-[18px] border-cocoa p-3.5 transition-all select-none peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-teal peer-focus-visible:outline-offset-2 ${
+                          className={`flex cursor-pointer items-center justify-between gap-3 rounded-[18px] border-cocoa p-3.5 transition-all select-none peer-focus-visible:outline peer-focus-visible:outline-teal peer-focus-visible:outline-offset-2 ${
                             selected
                               ? "bg-cream-deep shadow-sm ring-2 ring-teal"
                               : "bg-card hover:bg-cream"
@@ -357,7 +357,7 @@ export default function VoteBooth({
             role="dialog"
             aria-modal="true"
             aria-labelledby="vote-confirm-title"
-            className="border-cocoa relative w-full max-w-sm rounded-[22px] bg-card p-5 shadow-xl"
+            className="border-cocoa relative w-full max-w-sm rounded-lg bg-card p-5 shadow-xl"
           >
             <span className="mb-1 block font-display text-xs font-bold tracking-wider text-tangerine-deep uppercase">
               Confirm your vote
