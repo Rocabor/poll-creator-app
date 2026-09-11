@@ -164,42 +164,44 @@ export default function SiteHeaderActions({
                     New poll
                   </Link>
                   {(user.isGuest || user.email === DEMO_EMAIL) && (
-                    <form action={reloadSampleDataAction} className="w-full">
-                      <button
-                        type="submit"
-                        role="menuitem"
-                        onClick={() => setOpen(false)}
-                        className={itemClass}
-                      >
-                        <span className="flex-1">Reload sample data</span>
-                        <RotateCcw
-                          size={12}
-                          strokeWidth={2.4}
-                          aria-hidden="true"
-                        />
-                      </button>
-                    </form>
-                  )}
-                  <Link
-                    href="/?about=1"
+                  <button
+                    type="button"
                     role="menuitem"
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                      reloadSampleDataAction();
+                    }}
                     className={itemClass}
                   >
-                    About Tiebreak
-                  </Link>
-                  <div className="my-2 border-t border-cocoa/10" role="none" />
-                  <form action={logoutAction} className="w-full">
-                    <button
-                      type="submit"
-                      role="menuitem"
-                      onClick={() => setOpen(false)}
-                      className={itemClass}
-                    >
-                      <LogOut size={14} strokeWidth={2.4} aria-hidden="true" />
-                      Log out
-                    </button>
-                  </form>
+                    <span className="flex-1">Reload sample data</span>
+                    <RotateCcw
+                      size={12}
+                      strokeWidth={2.4}
+                      aria-hidden="true"
+                    />
+                  </button>
+                )}
+                <Link
+                  href="/?about=1"
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className={itemClass}
+                >
+                  About Tiebreak
+                </Link>
+                <div className="my-2 border-t border-cocoa/10" role="none" />
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setOpen(false);
+                    logoutAction();
+                  }}
+                  className={itemClass}
+                >
+                  <LogOut size={14} strokeWidth={2.4} aria-hidden="true" />
+                  Log out
+                </button>
                 </div>
               </>
             ) : (

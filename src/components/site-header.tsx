@@ -5,7 +5,7 @@ import SiteHeaderActions from "@/components/site-header-actions";
 
 export default function SiteHeader({ user }: { user: SafeUser | null }) {
   return (
-    <header className="sticky top-0 z-40 border-b-2 border-cocoa/10 bg-cream/95 px-4 py-2.5 backdrop-blur-sm sm:py-3">
+    <header className="sticky top-0 z-40 border-b-2 border-cocoa/10 bg-cream/95 px-4 py-2.5 sm:py-3">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-2">
         <Link
           href="/"
