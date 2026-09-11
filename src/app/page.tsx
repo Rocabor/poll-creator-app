@@ -3,7 +3,12 @@ import { getSessionUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ about?: string }>;
+}) {
+  const { about } = await searchParams;
   const user = await getSessionUser();
-  redirect(user ? "/dashboard" : "/landing");
+  redirect(about || !user ? "/landing" : "/dashboard");
 }

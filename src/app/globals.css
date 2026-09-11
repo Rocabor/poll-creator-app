@@ -72,6 +72,20 @@
     outline-offset: 2px;
   }
 
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  input[type="checkbox"],
+  input[type="radio"],
+  select,
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   ::selection {
     background-color: var(--color-butter);
     color: var(--color-cocoa);

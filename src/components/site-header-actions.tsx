@@ -110,7 +110,7 @@ export default function SiteHeaderActions({
         <>
           <div
             aria-hidden="true"
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-40 bg-cocoa/45 sm:bg-cocoa/0"
             onClick={() => setOpen(false)}
           />
           <div
@@ -168,6 +168,7 @@ export default function SiteHeaderActions({
                       <button
                         type="submit"
                         role="menuitem"
+                        onClick={() => setOpen(false)}
                         className={itemClass}
                       >
                         <span className="flex-1">Reload sample data</span>
@@ -180,7 +181,7 @@ export default function SiteHeaderActions({
                     </form>
                   )}
                   <Link
-                    href="/"
+                    href="/?about=1"
                     role="menuitem"
                     onClick={() => setOpen(false)}
                     className={itemClass}
@@ -192,6 +193,7 @@ export default function SiteHeaderActions({
                     <button
                       type="submit"
                       role="menuitem"
+                      onClick={() => setOpen(false)}
                       className={itemClass}
                     >
                       <LogOut size={14} strokeWidth={2.4} aria-hidden="true" />
