@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Gabarito, Karla } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
 import { getSessionUser } from "@/lib/auth";
 import SiteHeader from "@/components/site-header";
@@ -62,22 +61,42 @@ export default async function RootLayout({
           {children}
         </main>
 
-        <footer className="mx-auto mt-16 max-w-5xl border-t-2 border-cocoa/20 px-4 py-8 text-sm text-cocoa-soft">
-          <p>
-            <span className="font-display font-bold text-cocoa">tiebreak</span>{" "}
-            — group votes that live in the group chat.
-          </p>
-          <p className="mt-1">
-            Made for the{" "}
-            <Link
-              href="https://www.frontendmentor.io"
-              className="underline underline-offset-2 hover:text-teal"
-            >
-              Frontend Mentor
-            </Link>{" "}
-            Poll Creator App challenge.
-          </p>
-        </footer>
+        <footer className="mx-auto mt-16 max-w-5xl border-t-2 border-cocoa/20 px-4 py-8 text-sm text-cocoa-soft flex flex-col items-center text-center md:flex-row md:justify-between md:text-left">
+  <p>
+    <span className="font-display font-bold text-cocoa">tiebreak</span>{" "}
+    — group votes that live in the group chat.
+  </p>
+  
+  <nav
+    aria-label="Attribution credits"
+    className="mt-2 md:mt-0"
+  >
+    <p className="flex flex-wrap items-center justify-center gap-1 text-xs font-medium md:justify-end">
+      <span>Challenge by</span>
+      <a
+        href="https://frontendmentor.io"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-cocoa underline underline-offset-2 font-bold transition-colors hover:text-teal"
+      >
+        Frontend Mentor
+      </a>
+      <span>• Coded by</span>
+      <a
+        href="https://frontendmentor.io"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-cocoa underline underline-offset-2 font-bold transition-colors hover:text-teal"
+      >
+        @Rocabor
+      </a>
+      <span className="font-bold text-cocoa">
+        &copy;{new Date().getFullYear()}
+      </span>
+    </p>
+  </nav>
+</footer>
+
       </body>
     </html>
   );
