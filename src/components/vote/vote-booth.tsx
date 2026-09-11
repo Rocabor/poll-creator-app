@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Check, Sparkles, Vote } from "lucide-react";
+import { AlertCircle, Check, Shuffle, Sparkles, Vote } from "lucide-react";
 import { castVote } from "@/app/actions/votes";
 import { closeNow } from "@/app/actions/lifecycle";
 import { announce } from "@/lib/announce";
@@ -19,6 +19,8 @@ const AVATAR_TINTS: { id: string; hex: string; name: string }[] = [
   { id: "f6e0a4", hex: "#F6E0A4", name: "Butter" },
   { id: "e3d2f2", hex: "#E3D2F2", name: "Lilac" },
 ];
+
+const FACE_PRESETS = ["lina", "noor", "rio", "izu", "milo", "kena"];
 
 function randomToken(): string {
   const rand = new Uint8Array(16);
@@ -47,6 +49,7 @@ export default function VoteBooth({
   const [token] = useState<string>(() => local(tokenKey) || randomToken());
   const [name, setName] = useState(() => local("tb_voter_name") ?? "");
   const [tint, setTint] = useState(() => local("tb_voter_tint") ?? "cbe2d8");
+  const [face, setFace] = useState<string | null>(() => local("tb_voter_face"));
   const [selections, setSelections] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [casting, setCasting] = useState(false);
@@ -64,7 +67,7 @@ export default function VoteBooth({
 
   const votingOpen = live.status === "open";
 
-  const voterSeed = useMemo(() => name.trim() || "voter", [name]);
+  const voterSeed = useMemo(() => face ?? (name.trim() || "voter"), [face, name]);
 
   function toggleOption(optionId: string) {
     setError(null);
@@ -207,13 +210,62 @@ export default function VoteBooth({
                         type="button"
                         aria-label={`Select ${t.name} background`}
                         aria-pressed={tint === t.id}
-                        onClick={() => setTint(t.id)}
+                        onClick={() => {
+                          setTint(t.id);
+                          try {
+                            window.localStorage.setItem("tb_voter_tint", t.id);
+                          } catch {}
+                        }}
                         className={`h-6 w-6 rounded-full border border-cocoa-sm transition-transform ${
                           tint === t.id ? "scale-125 ring-2 ring-teal" : "hover:scale-110"
                         }`}
                         style={{ backgroundColor: t.hex }}
                       />
                     ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 border-t border-cocoa/10 pt-3">
+                  <span className="text-xs font-semibold text-cocoa-soft">Face:</span>
+                  <div className="-mx-1 flex max-w-[15rem] items-center gap-1.5 overflow-x-auto px-1 py-0.5">
+                    {FACE_PRESETS.map((seed) => (
+                      <button
+                        key={seed}
+                        type="button"
+                        aria-label={`Select face ${seed}`}
+                        aria-pressed={face === seed}
+                        onClick={() => {
+                          const next = face === seed ? null : seed;
+                          setFace(next);
+                          try {
+                            if (next) window.localStorage.setItem("tb_voter_face", next);
+                            else window.localStorage.removeItem("tb_voter_face");
+                          } catch {}
+                        }}
+                        className={`shrink-0 rounded-xl transition-transform ${
+                          face === seed
+                            ? "scale-105 ring-2 ring-teal"
+                            : "hover:scale-105"
+                        }`}
+                      >
+                        <Avatar name={seed} seed={seed} tint={tint} size={34} />
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      aria-label="Randomize face"
+                      onClick={() => {
+                        const random =
+                          FACE_PRESETS[Math.floor(Math.random() * FACE_PRESETS.length)];
+                        setFace(random);
+                        try {
+                          window.localStorage.setItem("tb_voter_face", random);
+                        } catch {}
+                      }}
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-cocoa-sm bg-cream-deep text-cocoa transition-colors hover:bg-cream"
+                    >
+                      <Shuffle size={14} strokeWidth={2.4} aria-hidden="true" />
+                    </button>
                   </div>
                 </div>
               </section>
