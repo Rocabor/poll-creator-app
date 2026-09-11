@@ -99,7 +99,7 @@ export default function DashboardPollCard({
 
       <div className="flex items-center gap-2">
         {!retired && poll.pendingSuggestions > 0 && (
-          <span className="rounded-full bg-tangerine px-3 py-1 text-xs font-bold text-cream">
+          <span className="rounded-full bg-tangerine-deep px-3 py-1 text-xs font-bold text-cream">
             {poll.pendingSuggestions} suggestion{poll.pendingSuggestions === 1 ? "" : "s"}
           </span>
         )}

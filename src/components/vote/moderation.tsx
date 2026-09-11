@@ -86,7 +86,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
               <li key={s.id} className="flex flex-wrap items-center gap-3 rounded-lg bg-cocoa/5 px-3 py-2">
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm text-cocoa-soft line-through">{s.label}</p>
-                  <p className="text-xs text-cocoa-faint">Suggested by {s.suggestedBy.name}</p>
+                  <p className="text-xs text-cocoa-soft">Suggested by {s.suggestedBy.name}</p>
                 </div>
                 <div className="flex gap-1.5">
                   <button

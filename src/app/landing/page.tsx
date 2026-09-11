@@ -56,7 +56,7 @@ export default function LandingPage() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
               href="/auth/signup"
-              className="btn-game-piece rounded-full bg-tangerine px-7 py-3.5 font-display text-lg font-bold text-cream"
+              className="btn-game-piece rounded-full bg-tangerine-deep px-7 py-3.5 font-display text-lg font-bold text-cream"
             >
               Create a poll
             </a>

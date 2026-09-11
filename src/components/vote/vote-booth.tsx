@@ -211,7 +211,7 @@ export default function VoteBooth({
                 type="button"
                 onClick={submit}
                 disabled={casting}
-                className="btn-game-piece mt-5 w-full rounded-full bg-tangerine px-6 py-3.5 font-display text-lg font-bold text-cream disabled:opacity-60"
+                className="btn-game-piece mt-5 w-full rounded-full bg-tangerine-deep px-6 py-3.5 font-display text-lg font-bold text-cream disabled:opacity-60"
               >
                 {casting ? "Casting…" : "Cast your vote"}
               </button>

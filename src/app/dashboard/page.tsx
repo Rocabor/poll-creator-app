@@ -108,7 +108,7 @@ export default async function DashboardPage() {
         </div>
         <Link
           href="/create"
-          className="btn-game-piece rounded-full bg-tangerine px-6 py-3 font-display text-lg font-bold text-cream"
+          className="btn-game-piece rounded-full bg-tangerine-deep px-6 py-3 font-display text-lg font-bold text-cream"
         >
           + New poll
         </Link>
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
       <section className="mt-8" aria-labelledby="open-heading">
         <h2 id="open-heading" className="font-display text-xl font-bold text-cocoa">
           Open
-          <span className="ml-2 text-cocoa-faint">({open.length})</span>
+          <span className="ml-2 text-cocoa-soft">({open.length})</span>
         </h2>
         {open.length === 0 ? (
           <Empty label="Nothing open right now." />
@@ -151,7 +151,7 @@ export default async function DashboardPage() {
       <section className="mt-10" aria-labelledby="settled-heading">
         <h2 id="settled-heading" className="font-display text-xl font-bold text-cocoa">
           Settled
-          <span className="ml-2 text-cocoa-faint">({settled.length})</span>
+          <span className="ml-2 text-cocoa-soft">({settled.length})</span>
         </h2>
         {settled.length === 0 ? (
           <Empty label="Nothing wrapped yet." />
@@ -172,7 +172,7 @@ export default async function DashboardPage() {
         <section className="mt-10" aria-labelledby="retired-heading">
           <h2 id="retired-heading" className="font-display text-xl font-bold text-cocoa">
             Retired
-            <span className="ml-2 text-cocoa-faint">({retired.length})</span>
+            <span className="ml-2 text-cocoa-soft">({retired.length})</span>
           </h2>
           <ul className="mt-3 space-y-3">
             {retired.map((poll) => (

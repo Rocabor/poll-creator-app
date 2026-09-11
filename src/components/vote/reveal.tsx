@@ -112,7 +112,7 @@ export default function Reveal({
                     ""
                   )
                 }
-                className="btn-game-piece mt-4 inline-flex items-center gap-2 rounded-full bg-tangerine px-5 py-3 font-display font-bold text-cream disabled:opacity-60"
+                className="btn-game-piece mt-4 inline-flex items-center gap-2 rounded-full bg-tangerine-deep px-5 py-3 font-display font-bold text-cream disabled:opacity-60"
               >
                 <Zap aria-hidden="true" size={18} />
                 Sudden death — settle it now
@@ -130,7 +130,7 @@ export default function Reveal({
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <span
               aria-hidden="true"
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-tangerine text-cream"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-tangerine-deep text-cream"
             >
               <Crown size={28} />
             </span>

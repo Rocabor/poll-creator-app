@@ -25,7 +25,7 @@ function ResultBar({ option, totalVotes }: { option: OptionView; totalVotes: num
         </div>
         <span className="tabular-nums shrink-0 text-sm font-bold text-cocoa">
           {option.votesCount} {option.votesCount === 1 ? "vote" : "votes"}
-          <span className="text-cocoa-faint"> · {option.percentage}%</span>
+          <span className="text-cocoa-soft"> · {option.percentage}%</span>
         </span>
       </div>
       <div

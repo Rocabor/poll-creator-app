@@ -241,7 +241,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
 
       <fieldset>
         <legend className="text-sm font-bold text-cocoa">
-          The choices <span className="font-normal text-cocoa-faint">(at least 2)</span>
+          The choices <span className="font-normal text-cocoa-soft">(at least 2)</span>
         </legend>
         <div className="mt-2 space-y-2">
           {options.map((value, index) => (
@@ -365,7 +365,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
       <button
         type="submit"
         disabled={pending}
-        className="btn-game-piece w-full rounded-full bg-tangerine px-6 py-3.5 font-display text-lg font-bold text-cream disabled:opacity-60"
+        className="btn-game-piece w-full rounded-full bg-tangerine-deep px-6 py-3.5 font-display text-lg font-bold text-cream disabled:opacity-60"
       >
         {pending ? "Creating poll…" : "Create the poll"}
       </button>
