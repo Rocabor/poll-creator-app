@@ -126,7 +126,7 @@ export default function VoteBooth({
               announce(result.ok ? "Poll closed — results are in." : result.error ?? "Couldn't close it.");
               if (result.ok) router.refresh();
             }}
-            className="rounded-full border-cocoa-sm px-4 py-2 text-sm font-bold text-tangerine-deep disabled:opacity-60"
+            className="rounded-full border-cocoa-sm bg-card px-4 py-2 text-sm font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60"
           >
             End now
           </button>
@@ -237,7 +237,7 @@ export default function VoteBooth({
         </section>
       )}
 
-      <div className={votingOpen && !locked ? "mt-10 opacity-90" : "mt-10"}>
+      <div className="mt-10">
         <ResultsBoard poll={live} showBackers={live.status === "settled"} />
       </div>
 
@@ -309,7 +309,7 @@ function SuggestForm({
   }
 
   return (
-    <section aria-labelledby="suggest-heading" className="mt-8 border-cocoa rounded-2xl bg-card p-4">
+    <section aria-labelledby="suggest-heading" className="mt-8 border-cocoa rounded-2xl bg-card p-5">
       <h2 id="suggest-heading" className="font-display text-lg font-bold text-cocoa">
         Got another idea?
       </h2>
@@ -343,12 +343,12 @@ function SuggestForm({
               setStatus("idle");
             }}
             placeholder="Add your idea…"
-            className="min-w-0 flex-1 rounded-lg border-2 border-cocoa bg-cream px-3 py-2.5 focus:border-teal"
+            className="min-w-0 flex-1 rounded-lg border-cocoa-sm bg-cream px-3 py-2.5 focus:border-teal"
           />
           <button
             type="submit"
             disabled={status === "busy"}
-            className="btn-game-piece rounded-full bg-teal px-5 py-2.5 font-display font-bold text-cream disabled:opacity-60"
+            className="btn-game-piece shadow-press-teal rounded-full bg-teal px-5 py-2.5 font-display font-bold text-cream disabled:opacity-60"
           >
             {status === "busy" ? "Sending…" : "Suggest"}
           </button>
@@ -390,7 +390,7 @@ function Identity({
         maxLength={40}
         onChange={(e) => setName(e.target.value)}
         placeholder="Priya, Kai, Jonah…"
-        className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 text-lg focus:border-teal"
+        className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 text-lg focus:border-teal"
       />
 
       <fieldset className="mt-3">

@@ -7,8 +7,8 @@ import Avatar from "@/components/avatar";
 function ResultBar({ option, totalVotes }: { option: OptionView; totalVotes: number }) {
   return (
     <li
-      className={`border-cocoa overflow-hidden rounded-xl bg-card ${
-        option.isLeader ? "border-[3px] border-tangerine" : ""
+      className={`overflow-hidden rounded-xl bg-card ${
+        option.isLeader ? "border-2 border-tangerine" : "border-cocoa-sm"
       }`}
     >
       <div className="flex items-center justify-between gap-3 px-4 py-3">

@@ -146,7 +146,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
           required
           maxLength={90}
           placeholder="Pizza night, film club, weekend plans…"
-          className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 font-display text-lg text-cocoa focus:border-teal"
+          className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 font-display text-lg text-cocoa focus:border-teal"
         />
       </div>
 
@@ -227,7 +227,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
               name="maxChoices"
               value={maxChoices}
               onChange={(e) => setMaxChoices(Number(e.target.value))}
-              className="mt-1 rounded-lg border-2 border-cocoa bg-card px-3 py-2"
+              className="mt-1 rounded-lg border-cocoa-sm bg-card px-3 py-2"
             >
               {[2, 3, 4].map((n) => (
                 <option key={n} value={n}>
@@ -258,7 +258,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
                 maxLength={80}
                 onChange={(e) => updateOption(index, e.target.value)}
                 placeholder={`Option ${index + 1}`}
-                className="w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 focus:border-teal"
+                className="w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
               />
               <button
                 type="button"
@@ -276,7 +276,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
           <button
             type="button"
             onClick={addOption}
-            className="mt-2 inline-flex items-center gap-2 rounded-full border-cocoa-sm px-4 py-2 text-sm font-bold text-teal transition-colors hover:bg-teal-soft"
+            className="mt-2 inline-flex items-center gap-2 rounded-full border-cocoa-sm bg-card px-4 py-2 text-sm font-bold text-teal transition-colors hover:bg-teal-soft"
           >
             <Plus aria-hidden="true" size={16} />
             Add an option
@@ -341,7 +341,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
               min={toDatetimeLocal(new Date().toISOString())}
               required={preset === "custom"}
               onChange={(e) => setCustom(e.target.value)}
-              className="mt-1 rounded-lg border-2 border-cocoa bg-card px-3 py-2 focus:border-teal"
+              className="mt-1 rounded-lg border-cocoa-sm bg-card px-3 py-2 focus:border-teal"
             />
             <p className="mt-1 text-xs text-cocoa-soft">
               Your local time. The poll settles automatically when it passes.

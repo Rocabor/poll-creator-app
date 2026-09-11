@@ -21,7 +21,7 @@ export default function SignupForm() {
           type="text"
           autoComplete="name"
           required
-          className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 focus:border-teal"
+          className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
         <p className="mt-1 text-xs text-cocoa-soft">
           Shown as the creator of your polls.
@@ -38,7 +38,7 @@ export default function SignupForm() {
           type="email"
           autoComplete="email"
           required
-          className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 focus:border-teal"
+          className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
       </div>
 
@@ -53,7 +53,7 @@ export default function SignupForm() {
           autoComplete="new-password"
           required
           minLength={8}
-          className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 focus:border-teal"
+          className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
         <p className="mt-1 text-xs text-cocoa-soft">At least 8 characters.</p>
       </div>

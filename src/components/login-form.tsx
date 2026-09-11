@@ -21,7 +21,7 @@ export default function LoginForm() {
           type="email"
           autoComplete="email"
           required
-          className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 focus:border-teal"
+          className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
       </div>
 
@@ -35,7 +35,7 @@ export default function LoginForm() {
           type="password"
           autoComplete="current-password"
           required
-          className="mt-1 w-full rounded-lg border-2 border-cocoa bg-card px-3 py-2.5 focus:border-teal"
+          className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
       </div>
 

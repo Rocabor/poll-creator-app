@@ -33,7 +33,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
   if (poll.status !== "open") return null;
 
   return (
-    <section aria-labelledby="moderation-heading" className="mt-6 border-cocoa rounded-2xl bg-card p-4">
+    <section aria-labelledby="moderation-heading" className="mt-6 border-cocoa rounded-2xl bg-card p-5">
       <h2 id="moderation-heading" className="font-display text-lg font-bold text-cocoa">
         Suggested options
       </h2>
@@ -65,7 +65,7 @@ export default function Moderation({ poll }: { poll: PollView }) {
                   type="button"
                   disabled={busyId === s.id}
                   onClick={() => run(s.id, () => declineSuggestion(s.id), `“${s.label}” declined.`)}
-                  className="inline-flex items-center gap-1 rounded-full border-cocoa-sm bg-cream px-3 py-2 text-sm font-bold text-cocoa disabled:opacity-60"
+                  className="inline-flex items-center gap-1 rounded-full border-cocoa-sm bg-card px-4 py-2 text-sm font-bold text-cocoa disabled:opacity-60"
                   aria-label={`Decline “${s.label}”`}
                 >
                   <X aria-hidden="true" size={16} /> No

@@ -40,9 +40,9 @@
   --radius-lg: 1.375rem;
   --radius-full: 9999rem;
 
-  --shadow-press-tangerine: inset 0 -2px 0 rgba(122, 34, 10, 0.35);
-  --shadow-press-teal: inset 0 -2px 0 rgba(10, 58, 50, 0.4);
-  --shadow-press-cocoa: inset 0 -2px 0 rgba(0, 0, 0, 0.35);
+  --shadow-press-tangerine: inset 0 -1.5px 0 rgba(122, 34, 10, 0.28);
+  --shadow-press-teal: inset 0 -1.5px 0 rgba(10, 58, 50, 0.32);
+  --shadow-press-cocoa: inset 0 -1.5px 0 rgba(0, 0, 0, 0.28);
 }
 
 @layer base {
@@ -79,16 +79,18 @@
 }
 
 @layer components {
-  /* Depth from ink, not shadows. Don't thin these out. */
+  /* Depth from ink, not shadows. Softer hairlines keep the game-piece
+     outline without the chunky felt. */
   .border-cocoa {
-    border: 2.5px solid var(--color-cocoa);
+    border: 2px solid var(--color-cocoa);
   }
 
   .border-cocoa-sm {
-    border: 1.5px solid var(--color-cocoa);
+    border: 1px solid var(--color-cocoa);
   }
 
-  /* Pressed-plastic game-piece buttons */
+  /* Pressed-plastic game-piece buttons. Default press-shadow is tangerine;
+     teal-filled game pieces pair it with the shadow-press-teal utility. */
   .btn-game-piece {
     box-shadow: var(--shadow-press-tangerine);
     transition:
@@ -97,8 +99,8 @@
   }
 
   .btn-game-piece:active {
-    transform: translateY(1.5px);
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+    transform: translateY(1px);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22);
   }
 
   .riso-title {

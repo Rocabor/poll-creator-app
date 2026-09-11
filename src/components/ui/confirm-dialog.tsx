@@ -109,7 +109,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={onClose}
             disabled={busy}
-            className="rounded-full border-cocoa-sm bg-cream px-5 py-2.5 font-display font-bold text-cocoa disabled:opacity-60"
+            className="rounded-full border-cocoa-sm bg-card px-5 py-2.5 font-display font-bold text-cocoa disabled:opacity-60"
           >
             Cancel
           </button>
@@ -118,7 +118,7 @@ export default function ConfirmDialog({
             onClick={onConfirm}
             disabled={busy}
             className={`btn-game-piece rounded-full px-5 py-2.5 font-display font-bold text-cream disabled:opacity-60 ${
-              tone === "danger" ? "bg-tangerine-deep" : "bg-teal"
+              tone === "danger" ? "bg-tangerine-deep" : "bg-teal shadow-press-teal"
             }`}
           >
             {busy ? "Working…" : confirmLabel}

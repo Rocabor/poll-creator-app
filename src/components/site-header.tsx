@@ -38,7 +38,7 @@ export default function SiteHeader({ user }: { user: SafeUser | null }) {
               <form action={logoutAction}>
                 <button
                   type="submit"
-                  className="rounded-lg border-cocoa-sm bg-card px-3 py-2 text-sm font-bold text-cocoa transition-colors hover:bg-cream-deep"
+                  className="rounded-full border-cocoa-sm bg-card px-4 py-2 text-sm font-bold text-cocoa transition-colors hover:bg-cream-deep"
                 >
                   Log out
                 </button>

@@ -66,7 +66,7 @@ export default function DashboardPollCard({
   const retired = Boolean(poll.deletedAt);
 
   return (
-    <li className="border-cocoa flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-card p-4">
+    <li className="border-cocoa flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-card p-5">
       <div className="min-w-0 flex-1">
         <h3 className="truncate font-display text-lg font-bold text-cocoa">
           {retired ? (

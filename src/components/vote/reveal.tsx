@@ -175,7 +175,7 @@ export default function Reveal({
       </div>
 
       {isMine && (
-        <div className="mt-8 border-cocoa rounded-2xl bg-card p-4">
+        <div className="mt-8 border-cocoa rounded-2xl bg-card p-5">
           <h3 className="font-display text-lg font-bold text-cocoa">
             Creator controls
           </h3>
@@ -184,7 +184,7 @@ export default function Reveal({
               type="button"
               disabled={busy}
               onClick={() => setReopenOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full bg-teal px-4 py-2.5 font-display font-bold text-cream disabled:opacity-60"
+              className="btn-game-piece shadow-press-teal inline-flex items-center gap-2 rounded-full bg-teal px-4 py-2.5 font-display font-bold text-cream disabled:opacity-60"
             >
               <RotateCcw aria-hidden="true" size={16} />
               Reopen for votes
@@ -193,7 +193,7 @@ export default function Reveal({
               type="button"
               disabled={busy}
               onClick={() => setRetireOpen(true)}
-              className="rounded-full border-cocoa-sm px-4 py-2.5 font-display font-bold text-tangerine-deep disabled:opacity-60"
+              className="rounded-full border-cocoa-sm bg-card px-4 py-2.5 font-display font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60"
             >
               Retire this poll
             </button>

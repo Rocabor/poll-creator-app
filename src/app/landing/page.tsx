@@ -40,7 +40,7 @@ export default function LandingPage() {
     <div>
       {/* Hero */}
       <section className="border-b-2 border-cocoa bg-cream-deep/60">
-        <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:py-24">
+        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:py-28">
           <p className="font-display text-sm font-bold tracking-widest text-tangerine-deep uppercase">
             Group votes for the group chat
           </p>
@@ -62,7 +62,7 @@ export default function LandingPage() {
             </a>
             <a
               href="/auth/login"
-              className="rounded-full border-2 border-cocoa bg-card px-7 py-3.5 font-display text-lg font-bold text-cocoa transition-colors hover:bg-cream-deep"
+              className="rounded-full border-cocoa-sm bg-card px-7 py-3.5 font-display text-lg font-bold text-cocoa transition-colors hover:bg-cream-deep"
             >
               Log in
             </a>
@@ -128,7 +128,7 @@ export default function LandingPage() {
             >
               <button
                 type="submit"
-                className="btn-game-piece w-full rounded-full bg-teal px-7 py-3.5 font-display text-lg font-bold text-cream"
+                className="btn-game-piece shadow-press-teal w-full rounded-full bg-teal px-7 py-3.5 font-display text-lg font-bold text-cream"
               >
                 Try the demo
               </button>
