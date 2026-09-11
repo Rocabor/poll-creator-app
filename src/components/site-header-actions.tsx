@@ -116,7 +116,7 @@ export default function SiteHeaderActions({
           <div
             ref={panelRef}
             role="menu"
-            className="absolute right-0 top-full z-50 mt-1 w-35 rounded-2xl border-2 border-cocoa bg-cream-bright p-1 shadow-xl"
+            className="absolute right-0 top-full z-50 mt-1 w-max min-w-35 max-w-[calc(100vw-2rem)] rounded-2xl border-2 border-cocoa bg-cream-bright p-1 shadow-xl"
           >
             {user ? (
               <>
@@ -127,7 +127,7 @@ export default function SiteHeaderActions({
                     tint={user.avatarTint}
                     size={38}
                   />
-                  <div className="flex min-w-0 flex-col">
+                  <div className="flex min-w-0 max-w-48 flex-col">
                     <span className="truncate font-display text-sm font-bold text-cocoa">
                       {user.name}
                     </span>
