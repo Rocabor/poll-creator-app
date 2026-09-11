@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { castVote } from "@/app/actions/votes";
 import { suggestOption } from "@/app/actions/suggestions";
+import { closeNow } from "@/app/actions/lifecycle";
 import { announce } from "@/lib/announce";
 import { usePoll } from "@/lib/use-poll";
 import Avatar from "@/components/avatar";
@@ -34,6 +36,7 @@ export default function VoteBooth({
   poll: PollView;
   isMine: boolean;
 }) {
+  const router = useRouter();
   const tokenKey = `tb_token_${poll.slug}`;
   const [token] = useState<string>(() => local(tokenKey) || randomToken());
   const [name, setName] = useState(() => local("tb_voter_name") ?? "");
@@ -113,6 +116,23 @@ export default function VoteBooth({
 
   return (
     <div className="mt-8">
+      {isMine && votingOpen && (
+        <div className="mb-6 flex justify-end">
+          <button
+            type="button"
+            disabled={casting}
+            onClick={async () => {
+              const result = await closeNow(poll.slug);
+              announce(result.ok ? "Poll closed — results are in." : result.error ?? "Couldn't close it.");
+              if (result.ok) router.refresh();
+            }}
+            className="rounded-full border-cocoa-sm px-4 py-2 text-sm font-bold text-tangerine-deep disabled:opacity-60"
+          >
+            End now
+          </button>
+        </div>
+      )}
+
       {votingOpen && (
         <section aria-labelledby="vote-heading">
           <h2 id="vote-heading" className="font-display text-2xl font-black text-cocoa">

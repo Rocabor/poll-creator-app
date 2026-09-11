@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CopyLink from "@/components/copy-link";
+import RetiredActions from "@/components/dashboard/retired-actions";
 import { closesInCompact, relativeTime } from "@/lib/time";
 
 export interface DashboardPoll {
@@ -67,12 +68,16 @@ export default function DashboardPollCard({
     <li className="border-cocoa flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-card p-4">
       <div className="min-w-0 flex-1">
         <h3 className="truncate font-display text-lg font-bold text-cocoa">
-          <Link
-            href={`/p/${poll.slug}`}
-            className="rounded-sm hover:underline hover:decoration-tangerine hover:decoration-2"
-          >
-            {poll.title}
-          </Link>
+          {retired ? (
+            poll.title
+          ) : (
+            <Link
+              href={`/p/${poll.slug}`}
+              className="rounded-sm hover:underline hover:decoration-tangerine hover:decoration-2"
+            >
+              {poll.title}
+            </Link>
+          )}
         </h3>
 
         <p className="mt-1 text-sm text-cocoa-soft">
@@ -100,6 +105,9 @@ export default function DashboardPollCard({
         {statusChip(poll, poll.pendingSuggestions)}
         {!retired && (
           <CopyLink url={shareUrl} label={`Share “${poll.title}”`} />
+        )}
+        {retired && (
+          <RetiredActions slug={poll.slug} />
         )}
       </div>
     </li>

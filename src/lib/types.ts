@@ -56,7 +56,7 @@ export interface PollView {
   isTied: boolean;
   leadingIds: string[];
   options: OptionView[];
-  /** Creator-only extras */
+  /** Extra creador-only extras */
   isMine?: boolean;
   pendingSuggestions?: PendingSuggestionView[];
   declinedSuggestions?: DeclinedSuggestionView[];
@@ -64,6 +64,14 @@ export interface PollView {
   winnerAttribution?: string;
   tieBrokenOptionId?: string;
   retired?: boolean;
+  /** Sudden-death linkage, when a tie spawned (or resolved into) a child poll. */
+  suddenDeathChild?: {
+    slug: string;
+    status: string;
+    closesAt: string;
+    settledAt: string | null;
+  } | null;
+  suddenDeathOfSlug?: string | null;
 }
 
 export interface AvatarData {

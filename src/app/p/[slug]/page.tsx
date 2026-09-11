@@ -6,6 +6,7 @@ import { getSessionUser } from "@/lib/auth";
 import { loadPollView } from "@/lib/poll-state";
 import { relativeTime, closesInCompact } from "@/lib/time";
 import VoteBooth from "@/components/vote/vote-booth";
+import Reveal from "@/components/vote/reveal";
 import CopyLink from "@/components/copy-link";
 
 export const dynamic = "force-dynamic";
@@ -98,7 +99,11 @@ export default async function PollPage({
         </div>
       )}
 
-      <VoteBooth poll={poll} isMine={Boolean(poll.isMine)} />
+      {opensStill ? (
+        <VoteBooth poll={poll} isMine={Boolean(poll.isMine)} />
+      ) : (
+        <Reveal poll={poll} isMine={Boolean(poll.isMine)} />
+      )}
     </div>
   );
 }

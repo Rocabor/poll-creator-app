@@ -44,15 +44,14 @@ const SAMPLE = JSON.parse(
   }[];
 };
 
-const BASE = SAMPLE.polls.reduce((earliest, p) => {
-  for (const ts of [p.createdAt, p.closesAt, ...(p.settledAt ? [p.settledAt] : []), ...p.votes.map((v) => v.castAt)]) {
-    const t = new Date(ts).getTime();
-    if (t < earliest) earliest = t;
-  }
-  return earliest;
-}, Infinity);
+// Timeline anchor: the dataset is a "window" around Wednesday Sept 17 2026.
+// We place that window on the real clock so the demo stays coherent — the day's
+// open order (pizza-night) closes ~5 hours from now, the film night tomorrow,
+// the brunch at the weekend, and the settled polls sit in the past.
+const ANCHOR_CLOSE_ISO = "2026-09-17T18:00:00Z"; // pizza-night.closesAt in-sample
+const ANCHOR_BUFFER_MS = 5 * 3_600_000; // closes ~5h from now
 
-const SHIFT = Date.now() - BASE;
+const SHIFT = Date.now() + ANCHOR_BUFFER_MS - new Date(ANCHOR_CLOSE_ISO).getTime();
 
 function ts(iso: string): Date {
   return new Date(new Date(iso).getTime() + SHIFT);

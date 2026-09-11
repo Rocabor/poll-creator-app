@@ -9,6 +9,7 @@ import type {
 } from "@/lib/types";
 
 export const TALLY_BREAKPOINT = 20;
+export const REOPEN_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 function byDisplayOrder(
   a: { displayOrder: number },
@@ -254,7 +255,37 @@ export async function loadPollView(
     poll.settledAt = settledAt;
   }
 
-  return toPollView(poll, { userId: opts.userId, includePending: opts.userId === poll.creatorId });
+  const view = toPollView(poll, {
+    userId: opts.userId,
+    includePending: opts.userId === poll.creatorId,
+  });
+
+  // Sudden-death linkage for reveal round-trips.
+  const [child, parent] = await Promise.all([
+    prisma.poll.findFirst({
+      where: { suddenDeathOfId: poll.id },
+      select: { slug: true, status: true, closesAt: true, settledAt: true },
+    }),
+    poll.suddenDeathOfId
+      ? prisma.poll.findUnique({
+          where: { id: poll.suddenDeathOfId },
+          select: { slug: true },
+        })
+      : null,
+  ]);
+
+  view.suddenDeathChild =
+    child ?
+      {
+        slug: child.slug,
+        status: child.status,
+        closesAt: child.closesAt.toISOString(),
+        settledAt: child.settledAt?.toISOString() ?? null,
+      }
+    : null;
+  view.suddenDeathOfSlug = parent?.slug ?? null;
+
+  return view;
 }
 
 export function suggestionStatusFromString(

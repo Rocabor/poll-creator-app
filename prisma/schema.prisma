@@ -49,7 +49,10 @@ model Poll {
   settledAt   DateTime?
   deletedAt   DateTime?
   tieResolved Boolean  @default(false)
-  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  suddenDeathOfId String? @unique
+  suddenDeathOf   Poll?  @relation("SuddenDeathChild", fields: [suddenDeathOfId], references: [id])
+  suddenDeathChildren Poll[] @relation("SuddenDeathChild")
+  creator         User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   options     Option[]
   votes       Vote[]
 }
