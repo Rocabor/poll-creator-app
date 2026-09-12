@@ -3,17 +3,25 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CheckCircle2, Clock } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { getSessionUser } from "@/lib/auth";
 import { loadPollView } from "@/lib/poll-state";
 import { relativeTime, closesInCompact } from "@/lib/time";
 import VoteBooth from "@/components/vote/vote-booth";
 import Reveal from "@/components/vote/reveal";
-import EndVotingButton from "@/components/vote/end-voting-button";
-import ShareCardButton from "@/components/share-card";
+import CreatorActions from "@/components/vote/creator-actions";
 
-export const dynamic = "force-dynamic";
+// The page renders the anonymous visitor view and caches it (ISR). Poll
+// membership is re-checked client-side so a creator's early-close and share
+// controls appear after hydration without blocking a shared, cacheable shell.
+export const revalidate = 5;
 
 const APP_URL = process.env.APP_URL ?? "http://localhost:3000";
+
+// Slugs are created at runtime, so there are none to pre-render at build time;
+// listing none still tells Next this route is cacheable, letting ISR serve a
+// shared anonymous shell and re-validate each slug on demand (5s).
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -58,8 +66,7 @@ export default async function PollPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const user = await getSessionUser();
-  const poll = await loadPollView(slug, { userId: user?.id });
+  const poll = await loadPollView(slug);
 
   if (!poll) notFound();
 
@@ -77,16 +84,7 @@ export default async function PollPage({
           ← Back to polls
         </Link>
 
-        {poll.isMine && (
-          <div className="flex items-center gap-2">
-            {opensStill && <EndVotingButton slug={poll.slug} />}
-            <ShareCardButton
-              poll={poll}
-              url={`${APP_URL}/p/${poll.slug}`}
-              label="Share card"
-            />
-          </div>
-        )}
+        <CreatorActions poll={poll} url={`${APP_URL}/p/${poll.slug}`} />
       </div>
 
       {/* Status Pill & Live Indicator */}
@@ -125,9 +123,9 @@ export default async function PollPage({
       </h1>
 
       {opensStill ? (
-        <VoteBooth poll={poll} isMine={Boolean(poll.isMine)} />
+        <VoteBooth poll={poll} />
       ) : (
-        <Reveal poll={poll} isMine={Boolean(poll.isMine)} />
+        <Reveal poll={poll} />
       )}
     </div>
   );

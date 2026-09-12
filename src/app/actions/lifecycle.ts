@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
@@ -9,6 +10,13 @@ export interface LifecycleResult {
   ok: boolean;
   error?: string;
   redirectTo?: string;
+}
+
+/** Push fresh page renders for one or more poll pages (ISR invalidation). */
+async function revalidatePollPages(...slugs: string[]) {
+  for (const slug of slugs) {
+    if (slug) await revalidatePath(`/p/${slug}`);
+  }
 }
 
 async function creatorGate(pollId: string): Promise<string | null> {
@@ -41,6 +49,7 @@ export async function closeNow(slug: string): Promise<LifecycleResult> {
     data: { status: "settled", settledAt: new Date() },
   });
 
+  await revalidatePollPages(slug);
   return { ok: true };
 }
 
@@ -68,6 +77,7 @@ export async function reopenPoll(slug: string): Promise<LifecycleResult> {
     },
   });
 
+  await revalidatePollPages(slug);
   return { ok: true };
 }
 
@@ -88,6 +98,7 @@ export async function retirePoll(slug: string): Promise<LifecycleResult> {
     data: { deletedAt: new Date() },
   });
 
+  await revalidatePollPages(slug);
   return { ok: true };
 }
 
@@ -102,6 +113,7 @@ export async function restorePoll(slug: string): Promise<LifecycleResult> {
   if (gate) return { ok: false, error: gate };
 
   await prisma.poll.update({ where: { id: poll.id }, data: { deletedAt: null } });
+  await revalidatePollPages(slug);
   return { ok: true };
 }
 
@@ -119,6 +131,7 @@ export async function deletePollForever(slug: string): Promise<LifecycleResult> 
   if (gate) return { ok: false, error: gate };
 
   await prisma.poll.deleteMany({ where: { id: poll.id } });
+  await revalidatePollPages(slug);
   return { ok: true };
 }
 
@@ -204,5 +217,6 @@ export async function startSuddenDeath(slug: string): Promise<LifecycleResult> {
     data: { suddenDeathOfId: child.id },
   });
 
+  await revalidatePollPages(slug, childSlug);
   return { ok: true, redirectTo: `/p/${child.slug}` };
 }

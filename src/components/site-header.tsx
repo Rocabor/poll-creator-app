@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
-import type { SafeUser } from "@/lib/auth";
-import SiteHeaderActions from "@/components/site-header-actions";
+import AccountArea from "@/components/account-area";
 
-export default function SiteHeader({ user }: { user: SafeUser | null }) {
+export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b-2 border-cocoa/10 bg-cream/95 px-4 py-2.5 sm:py-3">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-2">
@@ -25,7 +24,7 @@ export default function SiteHeader({ user }: { user: SafeUser | null }) {
           </span>
         </Link>
 
-        <SiteHeaderActions user={user} />
+        <AccountArea />
       </div>
     </header>
   );

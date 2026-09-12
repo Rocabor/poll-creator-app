@@ -29,10 +29,8 @@ function timeFmt(iso: string): string {
 
 export default function Reveal({
   poll,
-  isMine,
 }: {
   poll: PollView;
-  isMine: boolean;
 }) {
   const router = useRouter();
   const { data } = usePoll(poll.slug, null, 7000);
@@ -102,7 +100,7 @@ export default function Reveal({
                 </li>
               ))}
             </ul>
-            {isMine && (
+{live.isMine && (
               <button
                 type="button"
                 disabled={busy}
@@ -118,7 +116,7 @@ export default function Reveal({
                 Sudden death — settle it now
               </button>
             )}
-            {!isMine && live.suddenDeathChild && (
+            {!live.isMine && live.suddenDeathChild && (
               <p className="mt-3 text-sm font-bold text-teal">
                 <Link href={`/p/${live.suddenDeathChild.slug}`} className="underline underline-offset-2">
                   Jump to the sudden-death vote →
@@ -174,7 +172,7 @@ export default function Reveal({
         <ResultsBoard poll={live} showBackers />
       </div>
 
-      {isMine && (
+      {live.isMine && (
         <div className="mt-8 border-cocoa rounded-lg bg-cream-deep p-4 sm:p-5">
           <h3 className="font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
             Organizer actions

@@ -38,10 +38,8 @@ function local(key: string): string | null {
 
 export default function VoteBooth({
   poll,
-  isMine,
 }: {
   poll: PollView;
-  isMine: boolean;
 }) {
   const tokenKey = `tb_token_${poll.slug}`;
   const [token] = useState<string>(() => local(tokenKey) || randomToken());
@@ -370,7 +368,7 @@ export default function VoteBooth({
 
       <ResultsBoard poll={live} showBackers={live.status === "settled"} />
 
-      {votingOpen && isMine && <Moderation poll={live} />}
+      {votingOpen && live.isMine && <Moderation poll={live} />}
 
       {confirmOpen && votingOpen && !locked && (
         <Dialog
@@ -435,7 +433,7 @@ export default function VoteBooth({
         </Dialog>
       )}
 
-      {!isMine && votingOpen && live.suggestionsEnabled && (
+      {!live.isMine && votingOpen && live.suggestionsEnabled && (
         <SuggestModal
           open={suggestOpen}
           slug={poll.slug}

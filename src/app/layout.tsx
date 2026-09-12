@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { Gabarito, Karla } from "next/font/google";
 import "./globals.css";
-import { getSessionUser } from "@/lib/auth";
 import SiteHeader from "@/components/site-header";
 
 const gabarito = Gabarito({
@@ -35,8 +34,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getSessionUser();
-
   return (
     <html lang="en" className={`${gabarito.variable} ${karla.variable}`}>
       <body className="paper-grain flex min-h-dvh flex-col">
@@ -56,23 +53,20 @@ export default async function RootLayout({
           className="sr-only"
         />
 
-        <SiteHeader user={user} />
+        <SiteHeader />
 
         <main id="main" className="flex-1 min-h-[60dvh]">
           {children}
         </main>
 
-        <footer className="mx-auto mt-16 flex max-w-5xl flex-col items-center border-t-2 border-cocoa/20 px-4 py-8 text-center text-sm text-cocoa-soft md:flex-row md:justify-between md:text-left">
+        <footer className="mx-auto mt-16 flex max-w-5xl flex-col items-center border-t-2 border-cocoa/20 px-4 py-8 text-center text-sm text-cocoa-soft">
   <p>
     <span className="font-display font-bold text-cocoa">tiebreak</span>{" "}
     — group votes that live in the group chat.
   </p>
-  
-  <nav
-    aria-label="Attribution credits"
-    className="mt-2 md:mt-0"
-  >
-    <p className="flex flex-wrap items-center justify-center gap-1 text-xs font-medium md:justify-end">
+
+  <nav aria-label="Attribution credits" className="mt-2">
+    <p className="flex flex-wrap items-center justify-center gap-1 text-xs font-medium">
       <span>Challenge by</span>
       <a
         href="https://frontendmentor.io"

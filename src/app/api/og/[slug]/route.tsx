@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 // Brand tokens (see guidance/brand-kit.md) mirrored for the rasterized card.
 const CREAM = "#faf2e3";
