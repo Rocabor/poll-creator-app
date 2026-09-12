@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { Gabarito, Karla } from "next/font/google";
 import "./globals.css";
 import { getSessionUser } from "@/lib/auth";
@@ -98,6 +99,7 @@ export default async function RootLayout({
 </footer>
 
       </body>
+      <Analytics />
     </html>
   );
 }

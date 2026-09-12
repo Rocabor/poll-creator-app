@@ -6,8 +6,7 @@ Group-decision polls that live in the group chat: no accounts for voters, honest
 
 **Live URL:** [https://tiebreak-roan.vercel.app](https://tiebreak-roan.vercel.app)
 
-> Replace `./screenshot.png` with a capture of your deployed vote page (or a real link share):
-> ![Screenshot of your solution](./screenshot.png)
+>![Screenshot of your solution](https://snipboard.io/z72S94.jpg)
 
 ---
 
