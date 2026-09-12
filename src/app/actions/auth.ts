@@ -10,8 +10,12 @@ import {
   hashPassword,
   verifyPassword,
 } from "@/lib/auth";
+import { clientIp, clearRateLimit, rateLimit } from "@/lib/rate-limit";
 
 export type AuthState = { error?: string } | null;
+
+const RATE_LIMITED_MESSAGE =
+  "Too many attempts. Please wait a few minutes and try again.";
 
 const loginSchema = z.object({
   email: z.string().trim().email("Enter a valid email address"),
@@ -44,10 +48,21 @@ export async function loginAction(
   if (!parsed.success) return errorState(parsed.error);
 
   const { email, password } = parsed.data;
-  const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+  const ip = await clientIp();
+  const normalised = email.toLowerCase();
+
+  const perIp = await rateLimit(`login:${ip}`, 30, 15 * 60);
+  if (!perIp.ok) return { error: RATE_LIMITED_MESSAGE };
+  const perAccount = await rateLimit(`login:${ip}:${normalised}`, 8, 15 * 60);
+  if (!perAccount.ok) return { error: RATE_LIMITED_MESSAGE };
+
+  const user = await prisma.user.findUnique({ where: { email: normalised } });
   if (!user || !(await verifyPassword(password, user.passwordHash))) {
     return { error: "Wrong email or password." };
   }
+
+  await clearRateLimit(`login:${ip}`);
+  await clearRateLimit(`login:${ip}:${normalised}`);
 
   await createSession(user.id, false);
   redirect("/dashboard");
@@ -65,12 +80,17 @@ export async function signupAction(
   if (!parsed.success) return errorState(parsed.error);
 
   const { name, email, password } = parsed.data;
-  const existing = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+  const ip = await clientIp();
+  const perIp = await rateLimit(`signup:${ip}`, 5, 60 * 60);
+  if (!perIp.ok) return { error: RATE_LIMITED_MESSAGE };
+
+  const lowerEmail = email.toLowerCase();
+  const existing = await prisma.user.findUnique({ where: { email: lowerEmail } });
   if (existing) return { error: "That email already has an account." };
 
   const user = await prisma.user.create({
     data: {
-      email: email.toLowerCase(),
+      email: lowerEmail,
       name,
       passwordHash: await hashPassword(password),
       avatarSeed: name.trim(),
@@ -78,6 +98,7 @@ export async function signupAction(
   });
 
   await createSession(user.id, false);
+  await clearRateLimit(`signup:${ip}`);
   redirect("/dashboard");
 }
 

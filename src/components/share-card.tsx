@@ -13,6 +13,30 @@ function leaderOf(poll: PollView) {
   return leader ?? null;
 }
 
+async function writeClipboard(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Fallback for browsers/contexts where the async Clipboard API is denied
+    // (older engines, iframes, permission quirks).
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+}
+
 export default function ShareCardButton({
   poll,
   url,
@@ -64,25 +88,17 @@ export default function ShareCardButton({
       : `🗳️ ${poll.title}\nVote now (no account needed!): ${url}`;
 
   async function copyChatSummary() {
-    try {
-      await navigator.clipboard.writeText(chatSummary);
-      setCopiedText(true);
-      announce("Chat summary copied to clipboard");
-      setTimeout(() => setCopiedText(false), 2500);
-    } catch {
-      announce("Could not copy the summary");
-    }
+    const ok = await writeClipboard(chatSummary);
+    setCopiedText(ok);
+    announce(ok ? "Chat summary copied to clipboard" : "Could not copy the summary");
+    if (ok) setTimeout(() => setCopiedText(false), 2500);
   }
 
   async function copyVotingLink() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopiedLink(true);
-      announce("Share link copied to clipboard");
-      setTimeout(() => setCopiedLink(false), 2500);
-    } catch {
-      announce("Could not copy the link");
-    }
+    const ok = await writeClipboard(url);
+    setCopiedLink(ok);
+    announce(ok ? "Share link copied to clipboard" : "Could not copy the link");
+    if (ok) setTimeout(() => setCopiedLink(false), 2500);
   }
 
   return (

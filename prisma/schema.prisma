@@ -30,13 +30,24 @@ model User {
 
 model Session {
   id        String   @id @default(cuid())
-  token     String   @unique
+  tokenHash String   @unique
   userId    String
   isGuest   Boolean  @default(false)
   expiresAt DateTime
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@schema("tiebreak")
+}
+
+model RateLimit {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  count     Int      @default(1)
+  windowEnd DateTime
+  createdAt DateTime @default(now())
+
+  @@index([windowEnd])
   @@schema("tiebreak")
 }
 

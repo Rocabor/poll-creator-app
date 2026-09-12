@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { settleIfDue } from "@/lib/poll-state";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export interface CastVoteResult {
   ok: boolean;
@@ -36,6 +37,14 @@ export async function castVote(input: unknown): Promise<CastVoteResult> {
   });
 
   if (!poll || poll.deletedAt) return { ok: false, error: "This poll doesn't exist." };
+
+  // Per-poll, per-IP ceiling for cast attempts (a phone circulating a table
+  // casts a handful of votes; 60/hour stops ballot-stuffing scripts).
+  const ip = await clientIp();
+  const throttle = await rateLimit(`vote:${poll.id}:${ip}`, 60, 60 * 60);
+  if (!throttle.ok) {
+    return { ok: false, error: "Too many votes from this device. Try again later." };
+  }
 
   // Re-check the deadline server-side right now (read-time settlement).
   const settle = settleIfDue(poll);

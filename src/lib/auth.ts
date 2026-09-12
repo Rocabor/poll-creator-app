@@ -1,10 +1,14 @@
 import { cookies } from "next/headers";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 export const SESSION_COOKIE = "tb_session";
 export const SESSION_DAYS = 30;
+
+export function hashToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
 
 export interface SafeUser {
   id: string;
@@ -32,8 +36,9 @@ export async function createSession(
 ): Promise<string> {
   const token = randomBytes(32).toString("base64url");
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
+  const tokenHash = hashToken(token);
 
-  await prisma.session.create({ data: { token, userId, isGuest, expiresAt } });
+  await prisma.session.create({ data: { tokenHash, userId, isGuest, expiresAt } });
 
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
@@ -53,7 +58,7 @@ export async function getSessionUser(): Promise<SafeUser | null> {
   if (!token) return null;
 
   const session = await prisma.session.findUnique({
-    where: { token },
+    where: { tokenHash: hashToken(token) },
     include: { user: true },
   });
 
@@ -78,7 +83,7 @@ export async function destroySession(): Promise<void> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (token) {
-    await prisma.session.deleteMany({ where: { token } });
+    await prisma.session.deleteMany({ where: { tokenHash: hashToken(token) } });
   }
   cookieStore.delete(SESSION_COOKIE);
 }
