@@ -1,14 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AlertCircle, Check, Lock, Shuffle, Sparkles, Vote } from "lucide-react";
+import { AlertCircle, Check, Shuffle, Sparkles, Vote } from "lucide-react";
 import { castVote } from "@/app/actions/votes";
-import { closeNow } from "@/app/actions/lifecycle";
 import { announce } from "@/lib/announce";
 import { usePoll } from "@/lib/use-poll";
 import Avatar from "@/components/avatar";
-import ConfirmDialog from "@/components/ui/confirm-dialog";
 import ResultsBoard from "@/components/vote/results-board";
 import Moderation from "@/components/vote/moderation";
 import SuggestModal from "@/components/vote/suggest-modal";
@@ -45,7 +42,6 @@ export default function VoteBooth({
   poll: PollView;
   isMine: boolean;
 }) {
-  const router = useRouter();
   const tokenKey = `tb_token_${poll.slug}`;
   const [token] = useState<string>(() => local(tokenKey) || randomToken());
   const [name, setName] = useState(() => local("tb_voter_name") ?? "");
@@ -56,7 +52,6 @@ export default function VoteBooth({
   const [casting, setCasting] = useState(false);
   const [justVoted, setJustVoted] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [endOpen, setEndOpen] = useState(false);
   const [suggestOpen, setSuggestOpen] = useState(false);
 
   const { data } = usePoll(poll.slug, token);
@@ -157,7 +152,7 @@ export default function VoteBooth({
             <>
               <section
                 aria-label="Voter identity"
-                className="shadow-2xs border-cocoa rounded-lg bg-card p-4"
+                className="shadow-2xs border-cocoa animate-tb-rise rounded-lg bg-card p-4"
               >
                 <span className="mb-2 block font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
                   1. Choose your game face
@@ -330,7 +325,7 @@ export default function VoteBooth({
                 type="button"
                 disabled={!canCast || casting}
                 onClick={() => setConfirmOpen(true)}
-                className="btn-game-piece flex h-12 w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-4 font-display text-sm font-bold text-cream shadow-sm transition-all hover:bg-tangerine active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:rounded-full sm:text-base"
+                className="btn-game-piece flex h-12 w-full items-center justify-center gap-2 animate-tb-glow-soft rounded-xl border-cocoa-sm bg-tangerine-deep px-4 font-display text-sm font-bold text-cream shadow-sm transition-all hover:bg-tangerine active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:rounded-full sm:text-base"
               >
                 <Vote size={16} strokeWidth={2.5} aria-hidden="true" />
                 <span className="truncate">{ctaLabel}</span>
@@ -376,49 +371,10 @@ export default function VoteBooth({
 
       {votingOpen && isMine && <Moderation poll={live} />}
 
-      {votingOpen && isMine && (
-        <section
-          aria-label="Poll host controls"
-          className="mt-8 rounded-lg border-cocoa bg-cream-deep p-4 sm:p-5"
-        >
-          <h3 className="font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
-            Organizer actions
-          </h3>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              disabled={casting}
-              onClick={() => setEndOpen(true)}
-              className="btn-game-piece inline-flex items-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-4 py-2.5 font-display font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60 sm:rounded-full"
-            >
-              <Lock size={16} aria-hidden="true" />
-              End voting early
-            </button>
-          </div>
-        </section>
-      )}
-
-      <ConfirmDialog
-        open={endOpen}
-        title="End voting now?"
-        body="This locks the race, crowns the winner, and reveals the backers to the group. Votes already cast stay on the board."
-        confirmLabel="End voting"
-        onClose={() => setEndOpen(false)}
-        onConfirm={async () => {
-          setEndOpen(false);
-          const result = await closeNow(poll.slug);
-          announce(
-            result.ok ? "Poll closed — results are in." : result.error ?? "Couldn't close it."
-          );
-          if (result.ok) router.refresh();
-        }}
-        busy={casting}
-      />
-
       {confirmOpen && votingOpen && !locked && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
           <div
-            className="absolute inset-0 bg-cocoa/50"
+            className="absolute inset-0 animate-tb-fade bg-cocoa/50"
             onClick={casting ? undefined : () => setConfirmOpen(false)}
             aria-hidden="true"
           />
@@ -426,7 +382,7 @@ export default function VoteBooth({
             role="dialog"
             aria-modal="true"
             aria-labelledby="vote-confirm-title"
-            className="border-cocoa relative w-full max-w-sm rounded-lg bg-card p-5 shadow-xl"
+            className="border-cocoa relative w-full max-w-sm animate-tb-pop rounded-lg bg-card p-5 shadow-xl"
           >
             <span className="mb-1 block font-display text-xs font-bold tracking-wider text-tangerine-deep uppercase">
               Confirm your vote

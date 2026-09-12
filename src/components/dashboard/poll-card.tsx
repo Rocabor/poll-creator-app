@@ -66,7 +66,7 @@ export default function DashboardPollCard({
   const retired = Boolean(poll.deletedAt);
 
   return (
-    <li className="group flex flex-col gap-2 rounded-[20px] border-cocoa bg-card p-4 shadow-2xs transition-all hover:border-teal">
+    <li className="group flex flex-col gap-2 rounded-[20px] border-cocoa bg-card p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-teal hover:shadow-md">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2">

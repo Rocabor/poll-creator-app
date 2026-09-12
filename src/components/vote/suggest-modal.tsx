@@ -81,7 +81,7 @@ export default function SuggestModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
       <div
-        className="absolute inset-0 bg-cocoa/50"
+        className="absolute inset-0 animate-tb-fade bg-cocoa/50"
         onClick={busy ? undefined : onClose}
         aria-hidden="true"
       />
@@ -90,7 +90,7 @@ export default function SuggestModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="border-cocoa relative w-full max-w-sm rounded-lg bg-card p-5 shadow-xl"
+        className="border-cocoa relative w-full max-w-sm animate-tb-pop rounded-lg bg-card p-5 shadow-xl"
       >
         <div className="mb-1 flex items-start justify-between gap-2">
           <span className="inline-flex items-center gap-1.5 pt-0.5 font-display text-xs font-bold tracking-wider text-tangerine-deep uppercase">

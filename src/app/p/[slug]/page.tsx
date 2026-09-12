@@ -8,6 +8,7 @@ import { loadPollView } from "@/lib/poll-state";
 import { relativeTime, closesInCompact } from "@/lib/time";
 import VoteBooth from "@/components/vote/vote-booth";
 import Reveal from "@/components/vote/reveal";
+import EndVotingButton from "@/components/vote/end-voting-button";
 import ShareCardButton from "@/components/share-card";
 
 export const dynamic = "force-dynamic";
@@ -77,11 +78,14 @@ export default async function PollPage({
         </Link>
 
         {poll.isMine && (
-          <ShareCardButton
-            poll={poll}
-            url={`${APP_URL}/p/${poll.slug}`}
-            label="Share card"
-          />
+          <div className="flex items-center gap-2">
+            {opensStill && <EndVotingButton slug={poll.slug} />}
+            <ShareCardButton
+              poll={poll}
+              url={`${APP_URL}/p/${poll.slug}`}
+              label="Share card"
+            />
+          </div>
         )}
       </div>
 

@@ -74,7 +74,7 @@ export default function Reveal({
     <div className="mt-8">
       <section
         aria-labelledby="reveal-heading"
-        className="border-cocoa rounded-lg bg-card p-6"
+        className="border-cocoa animate-tb-rise rounded-lg bg-card p-6"
       >
         <p className="font-display text-sm font-bold tracking-widest text-cocoa-soft uppercase">
           Poll closed

@@ -86,7 +86,7 @@ export default function ConfirmDialog({
       role="presentation"
     >
       <div
-        className="absolute inset-0 bg-cocoa/50"
+        className="absolute inset-0 animate-tb-fade bg-cocoa/50"
         onClick={busy ? undefined : onClose}
         aria-hidden="true"
       />
@@ -96,7 +96,7 @@ export default function ConfirmDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={bodyId}
-        className="border-cocoa relative max-w-md rounded-2xl bg-card p-6"
+        className="border-cocoa relative max-w-md animate-tb-pop rounded-2xl bg-card p-6"
       >
         <h2 id={titleId} className="font-display text-2xl font-black text-cocoa">
           {title}

@@ -67,7 +67,7 @@ function LeaderCard({
   return (
     <article
       aria-label={`${ribbon}: ${option.label}`}
-      className="border-cocoa relative rounded-lg bg-tangerine p-4 text-cream-bright shadow-md transition-all sm:p-6"
+      className="border-cocoa relative animate-tb-rise rounded-lg bg-tangerine p-4 text-cream-bright shadow-md transition-all sm:p-6"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-butter px-3 py-1 text-xs font-bold tracking-wider text-cocoa uppercase">
@@ -172,7 +172,13 @@ function PackList({
         const isLast = idx === options.length - 1;
         const backers = option.backers ?? [];
         return (
-          <div key={option.id} className={`py-3.5 ${!isLast ? "border-b-2 border-dashed border-cream-deep" : ""}`}>
+          <div
+            key={option.id}
+            className={`animate-tb-rise py-3.5 ${
+              !isLast ? "border-b-2 border-dashed border-cream-deep" : ""
+            }`}
+            style={{ animationDelay: `${(idx + 1) * 60}ms` }}
+          >
             <div className="mb-1.5 flex items-baseline justify-between gap-2">
               <span className="min-w-0 truncate font-display text-base font-extrabold text-cocoa sm:text-lg">
                 {option.label}

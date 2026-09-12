@@ -132,6 +132,65 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* --- Micro-motion: quick entrances & a soft attention glow.
+     Everything sits behind the global prefers-reduced-motion guard below. --- */
+  @keyframes tb-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes tb-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes tb-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes tb-glow-soft {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(226, 84, 44, 0.55);
+    }
+    60% {
+      box-shadow: 0 0 0 9px rgba(226, 84, 44, 0);
+    }
+  }
+
+  .animate-tb-fade {
+    animation: tb-fade 0.16s ease-out both;
+  }
+
+  .animate-tb-rise {
+    animation: tb-rise 0.3s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  .animate-tb-pop {
+    animation: tb-pop 0.18s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  .animate-tb-glow-soft {
+    animation: tb-glow-soft 2.6s ease-in-out infinite;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

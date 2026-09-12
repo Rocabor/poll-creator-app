@@ -103,12 +103,12 @@ export default function ShareCardButton({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-cocoa/60 p-4"
+      className="fixed inset-0 z-50 flex animate-tb-fade items-center justify-center bg-cocoa/60 p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="share-card-title"
     >
-      <div className="relative w-full max-w-md rounded-lg border-cocoa bg-card p-5 shadow-2xl sm:p-6">
+      <div className="relative w-full max-w-md animate-tb-pop rounded-lg border-cocoa bg-card p-5 shadow-2xl sm:p-6">
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-tangerine">
             <Share2 size={18} strokeWidth={2.5} aria-hidden="true" />
