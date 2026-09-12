@@ -38,7 +38,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${gabarito.variable} ${karla.variable}`}>
-      <body className="paper-grain min-h-dvh">
+      <body className="paper-grain flex min-h-dvh flex-col">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-teal focus:px-4 focus:py-2 focus:font-bold focus:text-cream"
@@ -57,7 +57,7 @@ export default async function RootLayout({
 
         <SiteHeader user={user} />
 
-        <main id="main" className="min-h-[60dvh]">
+        <main id="main" className="flex-1 min-h-[60dvh]">
           {children}
         </main>
 

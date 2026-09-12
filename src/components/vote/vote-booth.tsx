@@ -270,7 +270,7 @@ export default function VoteBooth({
                 </div>
               </section>
 
-              <fieldset className="mb-3">
+              <fieldset className="mt-5 mb-3 sm:mt-6">
                 <legend className="mb-2 block font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
                   2. Cast your vote{" "}
                   {live.type === "multi" ? `(pick up to ${live.maxChoices})` : ""}

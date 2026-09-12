@@ -69,9 +69,23 @@ function LeaderCard({
       aria-label={`${ribbon}: ${option.label}`}
       className="border-cocoa relative rounded-lg bg-tangerine p-4 text-cream-bright shadow-md transition-all sm:p-6"
     >
-      <span className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-butter px-3 py-1 text-xs font-bold tracking-wider text-cocoa uppercase">
-        {ribbon}
-      </span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full border-cocoa-sm bg-butter px-3 py-1 text-xs font-bold tracking-wider text-cocoa uppercase">
+          {ribbon}
+        </span>
+        {option.source === "suggestion" && option.suggestedBy && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-cocoa/40 px-2.5 py-1 text-xs font-bold text-cream-bright">
+            <Avatar
+              name={option.suggestedBy.name}
+              seed={option.suggestedBy.seed}
+              tint={option.suggestedBy.tint}
+              size={20}
+              className="border-2 border-cream-bright/40"
+            />
+            Suggested by {option.suggestedBy.name}
+          </span>
+        )}
+      </div>
 
       <h3 className="mt-3 font-display text-2xl font-black tracking-tight text-cream-bright sm:text-3xl">
         {option.label}

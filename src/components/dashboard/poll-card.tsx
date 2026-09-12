@@ -72,7 +72,7 @@ export default function DashboardPollCard({
           <div className="mb-1 flex flex-wrap items-center gap-2">
             {statusChip(poll)}
             {!retired && poll.pendingSuggestions > 0 && (
-              <span className="rounded-full border border-cocoa/30 bg-butter px-2 py-0.5 text-[11px] font-bold text-cocoa">
+              <span className="animate-pulse rounded-full border border-cocoa/30 bg-butter px-2 py-0.5 text-[11px] font-bold text-cocoa">
                 {poll.pendingSuggestions} pending suggestion
                 {poll.pendingSuggestions === 1 ? "" : "s"}
               </span>
