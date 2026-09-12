@@ -57,3 +57,6 @@ prisma/dev.db-journal
 prisma/migrations/dev.db*
 *.db
 *.db-journal
+
+.vercel
+.env*

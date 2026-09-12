@@ -26,7 +26,7 @@ export async function generateMetadata({
   });
   if (!poll || poll.deletedAt) return { title: "Poll not found" };
   return {
-    title: `${poll.title} · Tiebreak`,
+    title: poll.title,
     description:
       "A group poll that lives in the chat. Tap to vote — no account needed, names land with the results.",
     openGraph: {
