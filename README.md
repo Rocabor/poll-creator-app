@@ -4,7 +4,7 @@ Group-decision polls that live in the group chat: no accounts for voters, honest
 
 **Challenge:** [Tiebreak on Frontend Mentor](https://www.frontendmentor.io/challenges/poll-creator-app)
 
-**Live URL:** [your-deployed-url.com](https://your-deployed-url.com)
+**Live URL:** [https://tiebreak-roan.vercel.app](https://tiebreak-roan.vercel.app)
 
 > Replace `./screenshot.png` with a capture of your deployed vote page (or a real link share):
 > ![Screenshot of your solution](./screenshot.png)
@@ -205,7 +205,7 @@ Production builds discipline vs. dev tolerance; pnpm 12's build-approval model; 
 
 | Category | Rating | Notes |
 |----------|--------|-------|
-| **Works for real users** — Deployed, functional end-to-end; a poll can go from created to decided via a real shared link | 4/5 | Fully working end-to-end on Supabase Postgres; Vercel deploy pending (`APP_URL` + env to be set) |
+| **Works for real users** — Deployed, functional end-to-end; a poll can go from created to decided via a real shared link | 5/5 | Fully working end-to-end on Supabase Postgres, live at [tiebreak-roan.vercel.app](https://tiebreak-roan.vercel.app) (`APP_URL` + env set on Vercel) |
 | **The vote page** — Phone-first, self-explanatory in seconds, zero friction between link tap and cast vote | 5/5 | Name → face → pick → cast; live results after; works for a first-time-ever visitor |
 | **Honest results** — Per-voter tally, relative pack bars, counts beside every percentage, ties in words | 5/5 | `TALLY_BREAKPOINT`, leader-relative bars, "It ends in a tie" |
 | **State machine integrity** — Open/settled/reopened and suggestion states enforced server-side; votes final | 5/5 | Server is the referee; auto-settle on read; idempotent token casting; confirmed reopen |
@@ -238,7 +238,7 @@ A components tidy pass on long tailwind class strings; real device testing at 32
 
 ## Known Limitations
 
-- **Vercel deploy not done yet** — the database already lives on Supabase Postgres (dedicated `tiebreak` schema); deploying just needs the env vars set on the host (`DATABASE_URL`, `APP_URL` pointing at the deployed origin).
+- **Vercel deploy done** — live at [tiebreak-roan.vercel.app](https://tiebreak-roan.vercel.app); project name `tiebreak` (`tiebreak.vercel.app` was already taken), Supabase Postgres schema `tiebreak`, env vars `DATABASE_URL` + `APP_URL` set on the host.
 - **5s polling** rather than push — live but not sub-second; jitter-free but not realtime-sporting.
 - **Voter identity is `localStorage`** — clearing site data loses the token (votes already cast stay safe server-side), so a "change my pick" flow would need emailless recovery.
 - **One creator per poll; no multi-admin voting groups** beyond the creator account.
