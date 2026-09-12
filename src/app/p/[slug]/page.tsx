@@ -8,7 +8,7 @@ import { loadPollView } from "@/lib/poll-state";
 import { relativeTime, closesInCompact } from "@/lib/time";
 import VoteBooth from "@/components/vote/vote-booth";
 import Reveal from "@/components/vote/reveal";
-import CopyLink from "@/components/copy-link";
+import ShareCardButton from "@/components/share-card";
 
 export const dynamic = "force-dynamic";
 
@@ -77,10 +77,10 @@ export default async function PollPage({
         </Link>
 
         {poll.isMine && (
-          <CopyLink
+          <ShareCardButton
+            poll={poll}
             url={`${APP_URL}/p/${poll.slug}`}
-            label={`Copy link for ${poll.title}`}
-            variant="pill"
+            label="Share card"
           />
         )}
       </div>
