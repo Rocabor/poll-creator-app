@@ -61,7 +61,7 @@ export default async function RootLayout({
           {children}
         </main>
 
-        <footer className="mx-auto mt-16 max-w-5xl border-t-2 border-cocoa/20 px-4 py-8 text-sm text-cocoa-soft flex flex-col items-center text-center md:flex-row md:justify-between md:text-left">
+        <footer className="mx-auto flex max-w-5xl flex-col items-center border-t-2 border-cocoa/20 px-4 pt-8 pb-24 text-center text-sm text-cocoa-soft md:flex-row md:justify-between md:text-left">
   <p>
     <span className="font-display font-bold text-cocoa">tiebreak</span>{" "}
     — group votes that live in the group chat.
