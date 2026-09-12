@@ -53,7 +53,7 @@ export default function LandingPage() {
           <form action={guestAction} className="w-full sm:w-auto">
             <button
               type="submit"
-              className="btn-game-piece flex w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-5 py-2.5 font-display text-sm font-bold text-cream transition-colors hover:bg-tangerine sm:rounded-full sm:px-6 sm:py-3 sm:text-base"
+              className="btn-game-piece flex w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-5 py-2.5 font-display text-sm font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine sm:rounded-full sm:px-6 sm:py-3 sm:text-base"
             >
               Try as Guest (Explore Demo)
               <ArrowRight size={16} strokeWidth={2.5} aria-hidden="true" />

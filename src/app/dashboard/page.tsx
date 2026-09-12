@@ -180,7 +180,7 @@ export default async function DashboardPage() {
         </div>
         <Link
           href="/create"
-          className="btn-game-piece inline-flex items-center gap-1.5 rounded-xl border-cocoa-sm bg-tangerine-deep px-3.5 py-1.5 text-xs font-bold text-cream transition-colors hover:bg-tangerine sm:rounded-full sm:px-4 sm:py-2 sm:text-sm"
+          className="btn-game-piece inline-flex items-center gap-1.5 rounded-xl border-cocoa-sm bg-tangerine-deep px-3.5 py-1.5 text-xs font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine sm:rounded-full sm:px-4 sm:py-2 sm:text-sm"
         >
           <Plus aria-hidden="true" size={15} strokeWidth={2.6} />
           <span className="hidden sm:inline">New poll</span>
@@ -265,7 +265,7 @@ export default async function DashboardPage() {
                 emptyAction={
                   <Link
                     href="/create"
-                    className="btn-game-piece inline-flex rounded-full border-cocoa-sm bg-tangerine-deep px-5 py-2.5 text-sm font-bold text-cream transition-colors hover:bg-tangerine"
+                    className="btn-game-piece inline-flex rounded-full border-cocoa-sm bg-tangerine-deep px-5 py-2.5 text-sm font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine"
                   >
                     Create your first poll
                   </Link>

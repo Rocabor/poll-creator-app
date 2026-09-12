@@ -365,7 +365,7 @@ export default function PollForm({ initial }: { initial?: InitialPoll }) {
       <button
         type="submit"
         disabled={pending}
-        className="btn-game-piece w-full rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3.5 font-display text-lg font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60 sm:rounded-full"
+        className="btn-game-piece w-full rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3.5 font-display text-lg font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine disabled:opacity-60 sm:rounded-full"
       >
         {pending ? "Creating poll…" : "Create the poll"}
       </button>

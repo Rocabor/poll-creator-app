@@ -14,7 +14,11 @@ function SegmentedTally({
   onLight: boolean;
 }) {
   if (totalVotes === 0) {
-    return <span className="text-xs font-bold text-cream-bright/80">No votes yet</span>;
+    return (
+      <span className="inline-flex rounded-full bg-scrim-on-tangerine px-2.5 py-1 text-xs font-bold text-cream-bright">
+        No votes yet
+      </span>
+    );
   }
 
   if (totalVotes > TALLY_BREAKPOINT) {
@@ -104,9 +108,9 @@ function LeaderCard({
       </div>
 
       {showBackers && backers.length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-cream-bright/20 pt-3">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold tracking-wide text-cream-bright/90 uppercase">
+        <div className="mt-3 border-t border-cream-bright/20 pt-3">
+          <div className="inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-full bg-scrim-on-tangerine px-3 py-1.5">
+            <span className="text-xs font-bold tracking-wide text-cream-bright uppercase">
               Backed by
             </span>
             <div className="flex -space-x-2">
@@ -126,11 +130,11 @@ function LeaderCard({
                 </span>
               )}
             </div>
+            <p className="text-xs font-medium text-cream-bright">
+              {backers.slice(0, 3).map((b) => b.name).join(", ")}
+              {backers.length > 3 ? ` + ${backers.length - 3} more` : ""}
+            </p>
           </div>
-          <p className="text-xs font-medium text-cream-bright/90">
-            {backers.slice(0, 3).map((b) => b.name).join(", ")}
-            {backers.length > 3 ? ` + ${backers.length - 3} more` : ""}
-          </p>
         </div>
       )}
     </article>

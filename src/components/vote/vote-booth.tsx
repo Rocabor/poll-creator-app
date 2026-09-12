@@ -6,6 +6,7 @@ import { castVote } from "@/app/actions/votes";
 import { announce } from "@/lib/announce";
 import { usePoll } from "@/lib/use-poll";
 import Avatar from "@/components/avatar";
+import Dialog from "@/components/ui/dialog";
 import ResultsBoard from "@/components/vote/results-board";
 import Moderation from "@/components/vote/moderation";
 import SuggestModal from "@/components/vote/suggest-modal";
@@ -325,7 +326,7 @@ export default function VoteBooth({
                 type="button"
                 disabled={!canCast || casting}
                 onClick={() => setConfirmOpen(true)}
-                className="btn-game-piece flex h-12 w-full items-center justify-center gap-2 animate-tb-glow-soft rounded-xl border-cocoa-sm bg-tangerine-deep px-4 font-display text-sm font-bold text-cream shadow-sm transition-all hover:bg-tangerine active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:rounded-full sm:text-base"
+                className="btn-game-piece flex h-12 w-full items-center justify-center gap-2 animate-tb-glow-soft rounded-xl border-cocoa-sm bg-tangerine-deep px-4 font-display text-sm font-bold text-cream shadow-sm transition-all hover:-translate-y-px hover:shadow-press-tangerine active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:rounded-full sm:text-base"
               >
                 <Vote size={16} strokeWidth={2.5} aria-hidden="true" />
                 <span className="truncate">{ctaLabel}</span>
@@ -372,21 +373,16 @@ export default function VoteBooth({
       {votingOpen && isMine && <Moderation poll={live} />}
 
       {confirmOpen && votingOpen && !locked && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
-          <div
-            className="absolute inset-0 animate-tb-fade bg-cocoa/50"
-            onClick={casting ? undefined : () => setConfirmOpen(false)}
-            aria-hidden="true"
-          />
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="vote-confirm-title"
-            className="border-cocoa relative w-full max-w-sm animate-tb-pop rounded-lg bg-card p-5 shadow-xl"
-          >
-            <span className="mb-1 block font-display text-xs font-bold tracking-wider text-tangerine-deep uppercase">
-              Confirm your vote
-            </span>
+        <Dialog
+          open
+          labelledBy="vote-confirm-title"
+          busy={casting}
+          onClose={() => setConfirmOpen(false)}
+          panelClassName="w-full max-w-sm rounded-lg p-5"
+        >
+          <span className="mb-1 block font-display text-xs font-bold tracking-wider text-tangerine-deep uppercase">
+            Confirm your vote
+          </span>
             <h3 id="vote-confirm-title" className="font-display text-xl font-extrabold text-cocoa">
               Lock it in?
             </h3>
@@ -431,13 +427,12 @@ export default function VoteBooth({
                 type="button"
                 disabled={casting}
                 onClick={submit}
-                className="btn-game-piece rounded-full border-cocoa-sm bg-tangerine-deep px-4 py-2 text-xs font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60"
+                className="btn-game-piece rounded-full border-cocoa-sm bg-tangerine-deep px-4 py-2 text-xs font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine disabled:opacity-60"
               >
                 {casting ? "Casting…" : "Cast my vote"}
               </button>
             </div>
-          </div>
-        </div>
+        </Dialog>
       )}
 
       {!isMine && votingOpen && live.suggestionsEnabled && (

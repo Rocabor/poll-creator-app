@@ -228,7 +228,7 @@ export default function ShareCardButton({
           <button
             type="button"
             onClick={copyChatSummary}
-            className="btn-game-piece flex w-full items-center justify-center gap-2 rounded-full border-cocoa-sm bg-tangerine-deep px-4 py-2.5 text-sm font-bold text-cream transition-colors hover:bg-tangerine"
+            className="btn-game-piece flex w-full items-center justify-center gap-2 rounded-full border-cocoa-sm bg-tangerine-deep px-4 py-2.5 text-sm font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine"
           >
             {copiedText ? (
               <>

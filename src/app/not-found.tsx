@@ -16,7 +16,7 @@ export default function NotFound() {
       <div className="mt-8 flex justify-center">
         <Link
           href="/"
-          className="btn-game-piece rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3 font-display text-lg font-bold text-cream transition-colors hover:bg-tangerine sm:rounded-full"
+          className="btn-game-piece rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3 font-display text-lg font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine sm:rounded-full"
         >
           Back to the app
         </Link>

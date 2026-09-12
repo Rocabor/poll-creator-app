@@ -1,13 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { signupAction, type AuthState } from "@/app/actions/auth";
 
 const initialState: AuthState = { error: undefined };
 
 export default function SignupForm() {
   const [state, formAction, pending] = useActionState(signupAction, initialState);
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (state?.error) nameRef.current?.focus();
+  }, [state]);
+
+  const invalid = state?.error ? true : undefined;
+  const describedBy = state?.error ? "signup-error" : undefined;
 
   return (
     <form action={formAction} className="mt-2 space-y-4" noValidate>
@@ -16,11 +24,14 @@ export default function SignupForm() {
           Your name
         </label>
         <input
+          ref={nameRef}
           id="name"
           name="name"
           type="text"
           autoComplete="name"
           required
+          aria-invalid={invalid}
+          aria-describedby={describedBy}
           className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
         <p className="mt-1 text-xs text-cocoa-soft">
@@ -38,6 +49,8 @@ export default function SignupForm() {
           type="email"
           autoComplete="email"
           required
+          aria-invalid={invalid}
+          aria-describedby={describedBy}
           className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
       </div>
@@ -53,6 +66,8 @@ export default function SignupForm() {
           autoComplete="new-password"
           required
           minLength={8}
+          aria-invalid={invalid}
+          aria-describedby={describedBy}
           className="mt-1 w-full rounded-lg border-cocoa-sm bg-card px-3 py-2.5 focus:border-teal"
         />
         <p className="mt-1 text-xs text-cocoa-soft">At least 8 characters.</p>
@@ -71,7 +86,7 @@ export default function SignupForm() {
       <button
         type="submit"
         disabled={pending}
-        className="btn-game-piece w-full rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3 font-display text-lg font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60 sm:rounded-full"
+        className="btn-game-piece w-full rounded-xl border-cocoa-sm bg-tangerine-deep px-6 py-3 font-display text-lg font-bold text-cream transition-all hover:-translate-y-px hover:shadow-press-tangerine disabled:opacity-60 sm:rounded-full"
       >
         {pending ? "Creating account…" : "Create my account"}
       </button>
