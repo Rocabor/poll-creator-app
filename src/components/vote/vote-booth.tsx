@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Check, Shuffle, Sparkles, Vote } from "lucide-react";
+import { AlertCircle, Check, Lock, Shuffle, Sparkles, Vote } from "lucide-react";
 import { castVote } from "@/app/actions/votes";
 import { closeNow } from "@/app/actions/lifecycle";
 import { announce } from "@/lib/announce";
 import { usePoll } from "@/lib/use-poll";
 import Avatar from "@/components/avatar";
+import ConfirmDialog from "@/components/ui/confirm-dialog";
 import ResultsBoard from "@/components/vote/results-board";
 import Moderation from "@/components/vote/moderation";
 import SuggestModal from "@/components/vote/suggest-modal";
@@ -55,6 +56,7 @@ export default function VoteBooth({
   const [casting, setCasting] = useState(false);
   const [justVoted, setJustVoted] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [endOpen, setEndOpen] = useState(false);
   const [suggestOpen, setSuggestOpen] = useState(false);
 
   const { data } = usePoll(poll.slug, token);
@@ -137,27 +139,9 @@ export default function VoteBooth({
         : "Cast my vote";
 
   const canCast = name.trim().length > 0 && selections.length > 0;
-  const showDock = votingOpen && !locked;
 
   return (
-    <div className={`mt-8 ${showDock ? "pb-36" : ""}`}>
-      {isMine && votingOpen && (
-        <div className="mb-6 flex justify-end">
-          <button
-            type="button"
-            disabled={casting}
-            onClick={async () => {
-              const result = await closeNow(poll.slug);
-              announce(result.ok ? "Poll closed — results are in." : result.error ?? "Couldn't close it.");
-              if (result.ok) router.refresh();
-            }}
-            className="rounded-full border-cocoa-sm bg-cream px-4 py-2 text-sm font-bold text-tangerine-deep transition-colors hover:bg-cream-deep disabled:opacity-60"
-          >
-            End voting early
-          </button>
-        </div>
-      )}
-
+    <div className="mt-8">
       {votingOpen && (
         <section aria-labelledby="vote-heading" className="mb-6">
           <h2 id="vote-heading" className="font-display text-2xl font-black text-cocoa">
@@ -342,6 +326,16 @@ export default function VoteBooth({
                 </p>
               )}
 
+              <button
+                type="button"
+                disabled={!canCast || casting}
+                onClick={() => setConfirmOpen(true)}
+                className="btn-game-piece flex h-12 w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-4 font-display text-sm font-bold text-cream shadow-sm transition-all hover:bg-tangerine active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:rounded-full sm:text-base"
+              >
+                <Vote size={16} strokeWidth={2.5} aria-hidden="true" />
+                <span className="truncate">{ctaLabel}</span>
+              </button>
+
               {live.suggestionsEnabled && (
                 <div className="mb-4 text-center">
                   <button
@@ -382,21 +376,44 @@ export default function VoteBooth({
 
       {votingOpen && isMine && <Moderation poll={live} />}
 
-      {showDock && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-cocoa/15 bg-cream/95 p-2.5 backdrop-blur-md sm:p-4">
-          <div className="mx-auto max-w-md">
+      {votingOpen && isMine && (
+        <section
+          aria-label="Poll host controls"
+          className="mt-8 rounded-lg border-cocoa bg-cream-deep p-4 sm:p-5"
+        >
+          <h3 className="font-display text-xs font-bold tracking-wider text-cocoa-soft uppercase">
+            Organizer actions
+          </h3>
+          <div className="mt-3 flex flex-wrap gap-2">
             <button
               type="button"
-              disabled={!canCast || casting}
-              onClick={() => setConfirmOpen(true)}
-              className="btn-game-piece flex h-11 w-full items-center justify-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-4 font-display text-sm font-bold text-cream shadow-sm transition-all hover:bg-tangerine active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:rounded-full sm:px-5 sm:text-base"
+              disabled={casting}
+              onClick={() => setEndOpen(true)}
+              className="btn-game-piece inline-flex items-center gap-2 rounded-xl border-cocoa-sm bg-tangerine-deep px-4 py-2.5 font-display font-bold text-cream transition-colors hover:bg-tangerine disabled:opacity-60 sm:rounded-full"
             >
-              <Vote size={16} strokeWidth={2.5} aria-hidden="true" />
-              <span className="truncate">{ctaLabel}</span>
+              <Lock size={16} aria-hidden="true" />
+              End voting early
             </button>
           </div>
-        </div>
+        </section>
       )}
+
+      <ConfirmDialog
+        open={endOpen}
+        title="End voting now?"
+        body="This locks the race, crowns the winner, and reveals the backers to the group. Votes already cast stay on the board."
+        confirmLabel="End voting"
+        onClose={() => setEndOpen(false)}
+        onConfirm={async () => {
+          setEndOpen(false);
+          const result = await closeNow(poll.slug);
+          announce(
+            result.ok ? "Poll closed — results are in." : result.error ?? "Couldn't close it."
+          );
+          if (result.ok) router.refresh();
+        }}
+        busy={casting}
+      />
 
       {confirmOpen && votingOpen && !locked && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
